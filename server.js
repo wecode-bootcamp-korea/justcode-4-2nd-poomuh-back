@@ -1,18 +1,17 @@
 const http = require('http');
 const express = require('express');
 const { PrismaClient } = require('@prisma/client');
-// const routes = require('./routes')
+const routes = require('./routes');
+const errUtils = require('./utils/errUtils');
 
 const prisma = new PrismaClient();
 
 const app = express();
 
 app.use(express.json());
-// app.use(routes)
+app.use(routes);
+app.use(errUtils.errHandler);
 
-app.get('/', (req, res) => {
-  res.json({ message: '/ hi' });
-});
 const server = http.createServer(app);
 
 const start = async () => {
