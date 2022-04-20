@@ -1,6 +1,7 @@
 const errGenerator = async (errParams) => {
-  const err = new Error(errParams.message);
-  err.statusCode = errParams.statusCode;
+  const { message, statusCode } = errParams;
+  const err = new Error(message);
+  err.statusCode = statusCode;
   return err;
 };
 
