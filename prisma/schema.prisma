@@ -25,50 +25,48 @@ model Users {
 }
 
 model RealEstateAgents {
-  id             Int       @id @default(autoincrement())
-  email          String    @unique
-  password       String
-  name           String
-  nickname       String
-  phone_number   String
-  real_estate_id Int
-  created_at     DateTime? @default(now())
+  id           Int       @id @default(autoincrement())
+  email        String    @unique
+  password     String
+  name         String
+  nickname     String?
+  phone_number String?
+  created_at   DateTime? @default(now())
 
-  real_estates RealEstates @relation(fields: [real_estate_id], references: [id])
+  real_estates RealEstates[]
 
   @@map("real_estate_agents")
 }
 
 model RealEstates {
-  id                Int       @id @default(autoincrement())
-  address_main      String
-  address_dong      String?
-  address_ho        String
-  latitude          Int
-  longitude         Int
-  supply_size       Int
-  exclusive_size    Int
-  building_floor    String
-  current_floor     String
-  available_date    String
-  descrption_title  String
-  descrption_detail String    @db.VarChar(1000)
-  is_deleted        Boolean
-  price_main        Decimal?  @db.Decimal(10, 0)
-  price_deposit     Decimal?  @db.Decimal(10, 0)
-  price_monthly     Decimal?  @db.Decimal(10, 0)
-  heat_id           Int
-  category_id       Int
-  created_at        DateTime? @default(now())
-  updated_at        DateTime? @default(now())
-  deleted_at        DateTime? @default(now())
+  id                   Int       @id @default(autoincrement())
+  address              String
+  latitude             Int
+  longitude            Int
+  supply_size          Int
+  exclusive_size       Int
+  building_floor       String
+  current_floor        String
+  available_date       String
+  descrption_title     String
+  descrption_detail    String    @db.VarChar(1000)
+  is_deleted           Boolean
+  price_main           Decimal   @db.Decimal(10, 0)
+  price_monthly        Decimal?  @db.Decimal(10, 0)
+  heat_id              Int
+  trade_id             Int
+  category_id          Int
+  real_estate_agent_id Int
+  created_at           DateTime? @default(now())
+  updated_at           DateTime? @default(now())
+  deleted_at           DateTime? @default(now())
 
-  heats      Heats      @relation(fields: [heat_id], references: [id])
-  categories Categories @relation(fields: [category_id], references: [id])
+  heats              Heats            @relation(fields: [heat_id], references: [id])
+  trades             Trades           @relation(fields: [trade_id], references: [id])
+  categories         Categories       @relation(fields: [category_id], references: [id])
+  real_estate_agents RealEstateAgents @relation(fields: [real_estate_agent_id], references: [id])
 
-  real_estate_agents      RealEstateAgents[]
   users_real_estate_likes UserRealEstateLikes[]
-  TradesRealEstatesTable  TradesRealEstates[]
 
   @@map("real_estates")
 }
@@ -101,7 +99,7 @@ model Trades {
   created_at DateTime? @default(now())
 
 
-  trades_real_estates TradesRealEstates[]
+  real_estates RealEstates[]
 
   @@map("trades")
 }
@@ -119,15 +117,4 @@ model UserRealEstateLikes {
 
 
   @@map("user_real_estate_likes")
-}
-
-model TradesRealEstates {
-  id             Int      @id @default(autoincrement())
-  trade_id       Int
-  real_estate_id Int
-  created_at     DateTime @default(now())
-
-  trades       Trades      @relation(fields: [trade_id], references: [id])
-  real_estates RealEstates @relation(fields: [real_estate_id], references: [id])
-  @@map("trades_real_estates")
 }
