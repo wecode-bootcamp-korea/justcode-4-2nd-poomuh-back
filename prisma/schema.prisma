@@ -42,7 +42,7 @@ model RealEstates {
   id                   Int       @id @default(autoincrement())
   address_main         String
   address_dong         String?
-  address_ho           String?
+  address_ho           String
   latitude             Decimal   @db.Decimal(18, 15)
   longitude            Decimal   @db.Decimal(18, 15)
   supply_size          Int
@@ -50,8 +50,8 @@ model RealEstates {
   building_floor       String
   current_floor        String
   available_date       String
-  descrption_title     String
-  descrption_detail    String    @db.VarChar(1000)
+  description_title    String
+  description_detail   String    @db.VarChar(1000)
   is_deleted           Boolean
   price_main           Decimal?  @db.Decimal(10, 0)
   prcie_deposit        Decimal?  @db.Decimal(10, 0)
@@ -60,8 +60,8 @@ model RealEstates {
   category_id          Int
   real_estate_agent_id Int
   created_at           DateTime? @default(now())
-  updated_at           DateTime?
-  deleted_at           DateTime?
+  updated_at           DateTime? @default(now())
+  deleted_at           DateTime? @default(now())
 
   heats              Heats            @relation(fields: [heat_id], references: [id])
   categories         Categories       @relation(fields: [category_id], references: [id])
@@ -110,8 +110,8 @@ model TradesRealEstates {
   trade_id       Int
   real_estate_id Int
   created_at     DateTime? @default(now())
-  updated_at     DateTime?
-  deleted_at     DateTime?
+  updated_at     DateTime? @default(now())
+  deleted_at     DateTime? @default(now())
 
   trades       Trades      @relation(fields: [trade_id], references: [id])
   real_estates RealEstates @relation(fields: [real_estate_id], references: [id])
@@ -124,8 +124,8 @@ model UsersRealEstatesLikes {
   user_id        Int
   real_estate_id Int
   created_at     DateTime? @default(now())
-  updated_at     DateTime?
-  deleted_at     DateTime?
+  updated_at     DateTime? @default(now())
+  deleted_at     DateTime? @default(now())
 
   users        Users       @relation(fields: [user_id], references: [id])
   real_estates RealEstates @relation(fields: [real_estate_id], references: [id])
