@@ -42,7 +42,7 @@ model RealEstates {
   id                   Int       @id @default(autoincrement())
   address_main         String
   address_dong         String?
-  address_ho           String?
+  address_ho           String
   latitude             Decimal   @db.Decimal(18, 15)
   longitude            Decimal   @db.Decimal(18, 15)
   supply_size          Int
