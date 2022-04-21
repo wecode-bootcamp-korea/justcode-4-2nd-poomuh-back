@@ -7,4 +7,10 @@ const checkByEmail = async (email) => {
    WHERE email= ${email}
    `;
 };
-module.exports = { checkByEmail };
+const getAgentByUserId = async (id) => {
+  return await prisma.$queryRaw`
+  SELECT id FROM real_estate_agents
+  WHERE ID = ${id}
+  `;
+};
+module.exports = { checkByEmail, getAgentByUserId };

@@ -23,4 +23,8 @@ const logIn = async (email, password) => {
   const token = jwt.sign({ userId: user[0].id }, process.env.SECRET_KEY);
   return token;
 };
-module.exports = { logIn };
+const findUserById = async (id) => {
+  return userDao.findUserById(id);
+};
+
+module.exports = { logIn, findUserById };
