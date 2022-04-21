@@ -19,7 +19,7 @@ model Users {
   phone_number String?
   created_at   DateTime? @default(now())
 
-  user_real_estate_likes UserRealEstateLikes[]
+  user_real_estate_likes UsersRealEstatesLikes[]
 
   @@map("users")
 }
@@ -40,21 +40,23 @@ model RealEstateAgents {
 
 model RealEstates {
   id                   Int       @id @default(autoincrement())
-  address              String
-  latitude             Int
-  longitude            Int
+  address_main         String
+  address_dong         String?
+  address_ho           String?
+  latitude             Decimal   @db.Decimal(18, 15)
+  longitude            Decimal   @db.Decimal(18, 15)
   supply_size          Int
   exclusive_size       Int
   building_floor       String
   current_floor        String
   available_date       String
-  descrption_title     String
-  descrption_detail    String    @db.VarChar(1000)
+  description_title    String
+  description_detail   String    @db.VarChar(1000)
   is_deleted           Boolean
-  price_main           Decimal   @db.Decimal(10, 0)
+  price_main           Decimal?  @db.Decimal(10, 0)
+  prcie_deposit        Decimal?  @db.Decimal(10, 0)
   price_monthly        Decimal?  @db.Decimal(10, 0)
   heat_id              Int
-  trade_id             Int
   category_id          Int
   real_estate_agent_id Int
   created_at           DateTime? @default(now())
@@ -62,11 +64,11 @@ model RealEstates {
   deleted_at           DateTime? @default(now())
 
   heats              Heats            @relation(fields: [heat_id], references: [id])
-  trades             Trades           @relation(fields: [trade_id], references: [id])
   categories         Categories       @relation(fields: [category_id], references: [id])
   real_estate_agents RealEstateAgents @relation(fields: [real_estate_agent_id], references: [id])
 
-  users_real_estate_likes UserRealEstateLikes[]
+  users_real_estate_likes UsersRealEstatesLikes[]
+  trades_real_estates     TradesRealEstates[]
 
   @@map("real_estates")
 }
@@ -98,13 +100,26 @@ model Trades {
   type       String
   created_at DateTime? @default(now())
 
-
-  real_estates RealEstates[]
+  trades_real_estates TradesRealEstates[]
 
   @@map("trades")
 }
 
-model UserRealEstateLikes {
+model TradesRealEstates {
+  id             Int       @id @default(autoincrement())
+  trade_id       Int
+  real_estate_id Int
+  created_at     DateTime? @default(now())
+  updated_at     DateTime? @default(now())
+  deleted_at     DateTime? @default(now())
+
+  trades       Trades      @relation(fields: [trade_id], references: [id])
+  real_estates RealEstates @relation(fields: [real_estate_id], references: [id])
+
+  @@map("trades_real_estates")
+}
+
+model UsersRealEstatesLikes {
   id             Int       @id @default(autoincrement())
   user_id        Int
   real_estate_id Int
@@ -116,5 +131,5 @@ model UserRealEstateLikes {
   real_estates RealEstates @relation(fields: [real_estate_id], references: [id])
 
 
-  @@map("user_real_estate_likes")
+  @@map("users_real_estates_likes")
 }
