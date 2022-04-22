@@ -1,12 +1,26 @@
-const agentService = require("../services/agentService");
-const err = require("../utils/errUtils");
+const agentService = require('../services/agentService');
+
+const signUp = async (req, res, next) => {
+  try {
+    const { email, password, username, nickname } = req.body;
+
+    await agentService.signUp(email, password, username, nickname);
+
+    return res.status(201).json({
+      username: username,
+      message: 'SIGNUP_SUCCESS',
+    });
+  } catch (err) {
+    next(err);
+  }
+};
 
 const logIn = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     const token = await agentService.logIn(email, password);
     return res.status(200).json({
-      message: "Login success",
+      message: 'Login success',
       access_token: token,
     });
   } catch (err) {
@@ -14,4 +28,4 @@ const logIn = async (req, res, next) => {
   }
 };
 
-module.exports = { logIn };
+module.exports = { signUp, logIn };
