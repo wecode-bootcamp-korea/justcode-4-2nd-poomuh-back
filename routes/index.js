@@ -9,6 +9,6 @@ const estateRoute = require('./estateRoute');
 router.use('/', testRoute);
 router.use('/users', userRoute);
 router.use('/agents', agentRoute);
-router.use('/estate', estateRoute);
+router.use('/estates', estateRoute);
 
 module.exports = router;

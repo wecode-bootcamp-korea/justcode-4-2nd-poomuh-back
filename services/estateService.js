@@ -1,7 +1,7 @@
 const estateDao = require('../models/estateDao');
 
-const filteredMaps = async (category, tradeType) => {
-  const filteredMaps = await estateDao.getFilteredMaps(category, tradeType);
+const filteredMaps = async (categories, tradeType) => {
+  const filteredMaps = await estateDao.getFilteredMaps(categories, tradeType);
 
   return filteredMaps;
 };

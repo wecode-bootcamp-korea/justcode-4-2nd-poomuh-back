@@ -1,7 +1,10 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-const getFilteredMaps = async (category, tradeType) => {
+const getFilteredMaps = async (categories, tradeType) => {
+  const category = categories.map((el) => `(c.type = ${el})`);
+  console.log(category);
+
   return await prisma.$queryRaw`
     SELECT
       re.address_main AS addresMain,
@@ -23,8 +26,9 @@ const getFilteredMaps = async (category, tradeType) => {
     LEFT JOIN trades_real_estates AS tre ON tre.real_estate_id = re.id
     LEFT JOIN trades AS t ON t.id = tre.trade_id
     WHERE
-      (lat BETWEEN 0 AND 99) AND
-      (lng BETWEEN 0 AND 999)
+      (re.latitude BETWEEN 0 AND 99) AND
+      (re.longitude BETWEEN 0 AND 999) AND
+      (c.type IN '원룸','빌라')
     GROUP BY re.id, c.type, t.type
   `;
 };

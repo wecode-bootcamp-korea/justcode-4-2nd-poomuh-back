@@ -13,7 +13,7 @@ INSERT INTO real_estates
   description_detail,
   is_deleted,
   price_main,
-  prcie_deposit,
+  price_deposit,
   price_monthly,
   heat_id,
   category_id,
