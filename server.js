@@ -1,8 +1,8 @@
-const http = require('http');
-const express = require('express');
-const { PrismaClient } = require('@prisma/client');
-const routes = require('./routes');
-const errUtils = require('./utils/errUtils');
+const http = require("http");
+const express = require("express");
+const { PrismaClient } = require("@prisma/client");
+const routes = require("./routes");
+const errUtils = require("./utils/errUtils");
 
 const prisma = new PrismaClient();
 
@@ -20,8 +20,7 @@ const start = async () => {
       console.log(`Server is listening on ${process.env.PORT}`)
     );
   } catch (err) {
-    console.error(err);
-    //    await prisma.$disconnect()
+    await prisma.$disconnect();
   }
 };
 
