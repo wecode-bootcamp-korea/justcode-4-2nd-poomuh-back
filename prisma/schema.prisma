@@ -54,7 +54,7 @@ model RealEstates {
   description_detail   String    @db.VarChar(1000)
   is_deleted           Boolean
   price_main           Decimal?  @db.Decimal(10, 0)
-  prcie_deposit        Decimal?  @db.Decimal(10, 0)
+  price_deposit        Decimal?  @db.Decimal(10, 0)
   price_monthly        Decimal?  @db.Decimal(10, 0)
   heat_id              Int
   category_id          Int
