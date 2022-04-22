@@ -22,6 +22,9 @@ const getFilteredMaps = async (category, tradeType) => {
     LEFT JOIN categories AS c ON re.category_id = c.id
     LEFT JOIN trades_real_estates AS tre ON tre.real_estate_id = re.id
     LEFT JOIN trades AS t ON t.id = tre.trade_id
+    WHERE
+      (lat BETWEEN 0 AND 99) AND
+      (lng BETWEEN 0 AND 999)
     GROUP BY re.id, c.type, t.type
   `;
 };

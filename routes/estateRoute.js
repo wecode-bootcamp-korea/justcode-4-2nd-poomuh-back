@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
-const estatateController = require('../controllers/estateController');
+const estateController = require('../controllers/estateController');
 
-router.get('/', estatateController.filteredMaps);
+router.get('/', estateController.filteredMaps);
 
 module.exports = router;
