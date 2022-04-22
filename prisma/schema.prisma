@@ -45,14 +45,14 @@ model RealEstates {
   address_ho           String
   latitude             Decimal   @db.Decimal(18, 15)
   longitude            Decimal   @db.Decimal(18, 15)
-  supply_size          Int
-  exclusive_size       Int
+  supply_size          Decimal   @db.Decimal(5, 2)
+  exclusive_size       Decimal   @db.Decimal(5, 2)
   building_floor       String
   current_floor        String
   available_date       String
   description_title    String
   description_detail   String    @db.VarChar(1000)
-  is_deleted           Boolean
+  is_deleted           Boolean   @default(false)
   price_main           Decimal?  @db.Decimal(10, 0)
   price_deposit        Decimal?  @db.Decimal(10, 0)
   price_monthly        Decimal?  @db.Decimal(10, 0)
