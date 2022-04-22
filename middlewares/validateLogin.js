@@ -1,12 +1,12 @@
-const err = require("../utils/errUtils");
+const errUtils = require('../utils/errUtils');
 
 const validateLogin = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
-      throw err.errGenerator({
+      throw errUtils.errGenerator({
         statusCode: 500,
-        message: "KeyError",
+        message: 'KeyError',
       });
     }
     next();

@@ -1,15 +1,15 @@
-const jwt = require("jsonwebtoken");
-const err = require("../utils/errUtils");
-const userService = require("../services/userService");
+const jwt = require('jsonwebtoken');
+const errUtils = require('../utils/errUtils');
+const userService = require('../services/userService');
 
 const usersValidateToken = async (req, res, next) => {
   try {
     const { token } = req.headers;
 
     if (!token) {
-      throw err.errGenerator({
+      throw errUtils.errGenerator({
         statusCode: 401,
-        message: "로그인이 필요합니다.",
+        message: '로그인이 필요합니다.',
       });
     }
 
@@ -18,9 +18,9 @@ const usersValidateToken = async (req, res, next) => {
     const findUser = await userService.findUserById({ id });
 
     if (!findUser) {
-      throw err.errGenerator({
+      throw errUtils.errGenerator({
         statusCode: 400,
-        message: "해당하는 유저를 찾을 수 없습니다.",
+        message: '해당하는 유저를 찾을 수 없습니다.',
       });
     }
     req.userid = findUser;
