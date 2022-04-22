@@ -1,5 +1,5 @@
-const estateService = require('../services/estateService');
-const errUtils = require('../utils/errUtils');
+const estateService = require("../services/estateService");
+const errUtils = require("../utils/errUtils");
 
 const filteredMaps = async (req, res, next) => {
   try {
@@ -12,7 +12,7 @@ const filteredMaps = async (req, res, next) => {
     //     message: 'KEY_ERROR',
     //   });
     // }
-    const categories = category.split(',');
+    const categories = category.split(",");
     console.log(categories);
 
     const filteredMaps = await estateService.filteredMaps(
@@ -26,4 +26,14 @@ const filteredMaps = async (req, res, next) => {
   }
 };
 
-module.exports = { filteredMaps };
+const createEstateInfo = async (req, res, next) => {
+  try {
+    await estateService.createEstateInfo(req);
+    return res.status(200).json({ message: "등록 성공!" });
+  } catch (err) {
+    next(err);
+  }
+};
+const getEstateInfo = async (req, res, next) => {};
+const deleteEstateInfo = async (req, res, next) => {};
+module.exports = { filteredMaps, createEstateInfo };

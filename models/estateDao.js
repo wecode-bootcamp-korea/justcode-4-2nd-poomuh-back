@@ -1,4 +1,4 @@
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 const getFilteredMaps = async (categories, tradeType) => {
@@ -32,5 +32,59 @@ const getFilteredMaps = async (categories, tradeType) => {
     GROUP BY re.id, c.type, t.type
   `;
 };
-
-module.exports = { getFilteredMaps };
+const createEstateInfo = async (
+  is_deleted,
+  address_main,
+  address_dong,
+  address_ho,
+  latitude,
+  longtitude,
+  supply_size,
+  exclusive_size,
+  building_floor,
+  current_floor,
+  available_date,
+  description_title,
+  description_detail,
+  heat,
+  category,
+  real_estate_agent
+) => {
+  return await prisma.$queryRaw`
+  INSERT INTO real_estates( 
+    is_deleted,
+    address_main,
+    address_dong,
+    address_ho,
+    latitude,
+    longitude,
+    supply_size,
+    exclusive_size,
+    building_floor,
+    current_floor,
+    available_date,
+    description_title,
+    description_detail,
+    heat_id,
+    category_id,
+    real_estate_agent_id) 
+  VALUES (
+    ${is_deleted},
+    ${address_main},
+    ${address_dong},
+    ${address_ho},
+    ${latitude},
+    ${longtitude},
+    ${supply_size},
+    ${exclusive_size},
+    ${building_floor},
+    ${current_floor},
+    ${available_date},
+    ${description_title},
+    ${description_detail},
+    ${heat},
+    ${category},
+    ${real_estate_agent}) 
+  `;
+};
+module.exports = { getFilteredMaps, createEstateInfo };
