@@ -27,5 +27,3 @@ const getFilteredMaps = async (category, tradeType) => {
 };
 
 module.exports = { getFilteredMaps };
-
-//

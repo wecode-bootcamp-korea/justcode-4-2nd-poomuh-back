@@ -1,4 +1,4 @@
-const realEstateService = require('../services/realEstateService');
+const estateService = require('../services/estateService');
 const errUtils = require('../utils/errUtils');
 
 const filteredMaps = async (req, res, next) => {
@@ -12,10 +12,7 @@ const filteredMaps = async (req, res, next) => {
     //   });
     // }
 
-    const filteredMaps = await realEstateService.filteredMaps(
-      category,
-      tradeType
-    );
+    const filteredMaps = await estateService.filteredMaps(category, tradeType);
 
     return res.status(200).json({ map: filteredMaps });
   } catch (err) {
