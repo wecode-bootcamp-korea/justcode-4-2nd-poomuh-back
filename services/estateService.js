@@ -7,12 +7,11 @@ const filteredMaps = async (categories, tradeType) => {
 };
 const createEstateInfo = async (req) => {
   const {
-    is_deleted,
     address_main,
     address_dong,
     address_ho,
     latitude,
-    longtitude,
+    longitude,
     supply_size,
     exclusive_size,
     building_floor,
@@ -20,17 +19,19 @@ const createEstateInfo = async (req) => {
     available_date,
     description_title,
     description_detail,
-    heat,
-    category,
-    real_estate_agent,
+    price_main,
+    price_deposit,
+    price_monthly,
+    heat_id,
+    category_id,
+    real_estate_agent_id,
   } = req.body;
   await estateDao.createEstateInfo(
-    is_deleted,
     address_main,
     address_dong,
     address_ho,
     latitude,
-    longtitude,
+    longitude,
     supply_size,
     exclusive_size,
     building_floor,
@@ -38,9 +39,26 @@ const createEstateInfo = async (req) => {
     available_date,
     description_title,
     description_detail,
-    heat,
-    category,
-    real_estate_agent
+    price_main,
+    price_deposit,
+    price_monthly,
+    heat_id,
+    category_id,
+    real_estate_agent_id
   );
 };
-module.exports = { filteredMaps, createEstateInfo };
+
+const getEstateInfo = async (estateId, agentId) => {
+  return await estateDao.getEstateInfo(estateId, agentId);
+};
+
+const deleteEstateInfo = async (estateId, agentId) => {
+  return await estateDao.deleteEstateInfo(estateId, agentId);
+};
+
+module.exports = {
+  filteredMaps,
+  createEstateInfo,
+  getEstateInfo,
+  deleteEstateInfo,
+};

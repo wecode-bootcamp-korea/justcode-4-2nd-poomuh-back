@@ -33,12 +33,11 @@ const getFilteredMaps = async (categories, tradeType) => {
   `;
 };
 const createEstateInfo = async (
-  is_deleted,
   address_main,
   address_dong,
   address_ho,
   latitude,
-  longtitude,
+  longitude,
   supply_size,
   exclusive_size,
   building_floor,
@@ -46,13 +45,15 @@ const createEstateInfo = async (
   available_date,
   description_title,
   description_detail,
-  heat,
-  category,
-  real_estate_agent
+  price_main,
+  price_deposit,
+  price_monthly,
+  heat_id,
+  category_id,
+  real_estate_agent_id
 ) => {
   return await prisma.$queryRaw`
   INSERT INTO real_estates( 
-    is_deleted,
     address_main,
     address_dong,
     address_ho,
@@ -65,16 +66,18 @@ const createEstateInfo = async (
     available_date,
     description_title,
     description_detail,
+    price_main,
+    price_deposit,
+    price_monthly,
     heat_id,
     category_id,
     real_estate_agent_id) 
   VALUES (
-    ${is_deleted},
     ${address_main},
     ${address_dong},
     ${address_ho},
     ${latitude},
-    ${longtitude},
+    ${longitude},
     ${supply_size},
     ${exclusive_size},
     ${building_floor},
@@ -82,9 +85,41 @@ const createEstateInfo = async (
     ${available_date},
     ${description_title},
     ${description_detail},
-    ${heat},
-    ${category},
-    ${real_estate_agent}) 
+    ${price_main},
+    ${price_deposit},
+    ${price_monthly},
+    ${heat_id},
+    ${category_id},
+    ${real_estate_agent_id}) 
   `;
 };
-module.exports = { getFilteredMaps, createEstateInfo };
+
+const getEstateInfo = async (estateId, agentId) => {
+  return await prisma.realEstates.findMany({
+    where: { id: Number(agentId), real_estate_agent_id: Number(estateId) },
+    select: {
+      id: true,
+      created_at: true,
+      category_id: true,
+      price_main: true,
+      price_deposit: true,
+      price_monthly: true,
+    },
+  });
+};
+
+const deleteEstateInfo = async (estateId, agentId) => {
+  return await prisma.$queryRaw`
+  UPDATE real_estates 
+  SET is_deleted = 1
+  WHERE real_estate_agent_id=${agentId}
+  AND id=${estateId}
+  `;
+};
+
+module.exports = {
+  getFilteredMaps,
+  createEstateInfo,
+  getEstateInfo,
+  deleteEstateInfo,
+};

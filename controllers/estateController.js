@@ -34,6 +34,30 @@ const createEstateInfo = async (req, res, next) => {
     next(err);
   }
 };
-const getEstateInfo = async (req, res, next) => {};
-const deleteEstateInfo = async (req, res, next) => {};
-module.exports = { filteredMaps, createEstateInfo };
+
+const getEstateInfo = async (req, res, next) => {
+  try {
+    const estateId = req.params.id;
+    const agentId = req.agent;
+    const estate = await estateService.getEstateInfo(estateId, agentId);
+    return res.status(200).json(estate);
+  } catch (err) {
+    next(err);
+  }
+};
+const deleteEstateInfo = async (req, res, next) => {
+  try {
+    const estateId = req.params.id;
+    const agentId = req.agent;
+    await estateService.deleteEstateInfo(estateId, agentId);
+    return res.status(200).json({ message: "삭제 성공!" });
+  } catch (err) {
+    next(err);
+  }
+};
+module.exports = {
+  filteredMaps,
+  createEstateInfo,
+  getEstateInfo,
+  deleteEstateInfo,
+};

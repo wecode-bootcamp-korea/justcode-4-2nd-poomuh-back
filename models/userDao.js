@@ -1,4 +1,4 @@
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 const createUser = async (email, encryptPw, username, nickname) => {
@@ -15,10 +15,10 @@ const checkByEmail = async (email) => {
   `;
 };
 
-const findUserById = async (id) => {
+const findUserById = async (number) => {
   return await prisma.$queryRaw`
     SELECT id FROM users
-    where id =${id}
+    where id =${number}
   `;
 };
 
