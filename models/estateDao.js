@@ -134,17 +134,31 @@ const getEstateInfo = async (estateId, agentId) => {
 };
 
 const getEstateList = async (agentId) => {
-  return await prisma.realEstates.findMany({
+  const estateId = await prisma.realEstates.findMany({
     where: { real_estate_agent_id: Number(agentId) },
-    select: {
-      id: true,
-      price_main: true,
-      price_deposit: true,
-      price_monthly: true,
-      category_id: true,
-      created_at: true,
-    },
+    select: { id: true },
   });
+  let result = [];
+  for (i = 0; i < estateId.length; i++) {
+    result[i] = await prisma.realEstates.findUnique({
+      where: { id: estateId[i].id },
+      select: {
+        id: true,
+        price_main: true,
+        price_deposit: true,
+        price_monthly: true,
+        category_id: true,
+        created_at: true,
+        users_real_estate_likes: {
+          where: { real_estate_id: Number(`${estateId[i].id}`) },
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
+  }
+  return result;
 };
 const putEstateInfo = async (
   estateId,
