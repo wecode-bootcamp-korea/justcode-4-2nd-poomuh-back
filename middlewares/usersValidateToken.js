@@ -15,15 +15,16 @@ const usersValidateToken = async (req, res, next) => {
 
     //token이 해당유저것이 맞는지 확인
     const id = jwt.verify(token, process.env.SECRET_KEY);
+
     const findUser = await userService.findUserById(id.userId);
 
-    if (!findUser) {
+    if (!findUser[0]) {
       throw errUtils.errGenerator({
         statusCode: 400,
         message: '해당하는 유저를 찾을 수 없습니다.',
       });
     }
-    req.userid = findUser;
+    req.user = findUser[0].id;
     next();
   } catch (err) {
     next(err);
