@@ -3,18 +3,10 @@ const errUtils = require('../utils/errUtils');
 
 const filteredMaps = async (req, res, next) => {
   try {
-    const { categories, tradeType } = req.query;
-    // if (!category || !tradeType) {
-    //   throw errUtils.errGenerator({
-    //     statusCode: 400,
-    //     message: 'KEY_ERROR',
-    //   });
-    // }
+    const user = req.userid ? req.userid[0].id : '';
+    const { tradeType } = req.query;
 
-    const filteredMaps = await estateService.filteredMaps(
-      categories,
-      tradeType
-    );
+    const filteredMaps = await estateService.filteredMaps(user, tradeType);
 
     return res.status(200).json({ map: filteredMaps });
   } catch (err) {

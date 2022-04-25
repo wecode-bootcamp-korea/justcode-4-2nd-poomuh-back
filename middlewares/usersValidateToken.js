@@ -14,8 +14,8 @@ const usersValidateToken = async (req, res, next) => {
     }
 
     //token이 해당유저것이 맞는지 확인
-    const { id } = jwt.verify(token, process.env.SECRET_KEY);
-    const findUser = await userService.findUserById({ id });
+    const id = jwt.verify(token, process.env.SECRET_KEY);
+    const findUser = await userService.findUserById(id.userId);
 
     if (!findUser) {
       throw errUtils.errGenerator({
