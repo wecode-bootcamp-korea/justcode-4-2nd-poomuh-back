@@ -24,7 +24,6 @@ const keyErrorEstate = async (req, res, next) => {
     } = req.body;
     const requiredKey = {
       address_main,
-      address_dong,
       address_ho,
       latitude,
       longitude,
@@ -35,13 +34,11 @@ const keyErrorEstate = async (req, res, next) => {
       available_date,
       description_title,
       description_detail,
-      price_main,
-      price_deposit,
-      price_monthly,
       heat_id,
       category_id,
       real_estate_agent_id,
     };
+
     //전세월세 가격이 둘다 안들어왔을때
     if (!price_main && !price_deposit) {
       throw errUtils.errGenerator({
@@ -56,14 +53,16 @@ const keyErrorEstate = async (req, res, next) => {
         message: "KeyError : monthly",
       });
     }
-    // for (const key in requiredKey) {
-    //   if (!key) {
-    //     throw errUtils.errGenerator({
-    //       statusCode: 400,
-    //       message: `KeyError: ${key}`,
-    //     });
-    //   }
-    // }
+
+    for (const key in requiredKey) {
+      if (!requiredKey[key]) {
+        throw errUtils.errGenerator({
+          statusCode: 400,
+          message: `KeyError: ${key}`,
+        });
+      }
+    }
+
     next();
   } catch (err) {
     next(err);
