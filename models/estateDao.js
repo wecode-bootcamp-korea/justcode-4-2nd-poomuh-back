@@ -1,10 +1,7 @@
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient, Prisma } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-const getFilteredMaps = async (categories, tradeType) => {
-  const category = categories.map((el) => `(c.type = ${el})`);
-  console.log(category);
-
+const getFilteredMaps = async (arrCategories, arrTradeTypes) => {
   return await prisma.$queryRaw`
     SELECT
       re.address_main AS addresMain,
@@ -22,14 +19,15 @@ const getFilteredMaps = async (categories, tradeType) => {
       c.type AS categoryType,
       JSON_ARRAYAGG(t.type) AS tradeTypes
     FROM real_estates AS re
-    LEFT JOIN categories AS c ON re.category_id = c.id
-    LEFT JOIN trades_real_estates AS tre ON tre.real_estate_id = re.id
-    LEFT JOIN trades AS t ON t.id = tre.trade_id
+    JOIN categories AS c ON re.category_id = c.id
+    JOIN trades_real_estates AS tre ON tre.real_estate_id = re.id
+    JOIN trades AS t ON t.id = tre.trade_id
     WHERE
       (re.latitude BETWEEN 0 AND 99) AND
       (re.longitude BETWEEN 0 AND 999) AND
-      (c.type IN '원룸','빌라')
-    GROUP BY re.id, c.type, t.type
+      (c.type IN (${Prisma.join(arrCategories)})) AND
+      (t.type IN (${Prisma.join(arrTradeTypes)}))
+    GROUP BY re.id, c.type
   `;
 };
 

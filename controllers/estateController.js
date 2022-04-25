@@ -3,17 +3,13 @@ const errUtils = require('../utils/errUtils');
 
 const filteredMaps = async (req, res, next) => {
   try {
-    const { category, tradeType } = req.query;
-
-    console.log(tradeType);
+    const { categories, tradeType } = req.query;
     // if (!category || !tradeType) {
     //   throw errUtils.errGenerator({
     //     statusCode: 400,
     //     message: 'KEY_ERROR',
     //   });
     // }
-    const categories = category.split(',');
-    console.log(categories);
 
     const filteredMaps = await estateService.filteredMaps(
       categories,
