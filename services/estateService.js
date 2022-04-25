@@ -1,8 +1,8 @@
 const estateDao = require("../models/estateDao");
 
 const filteredMaps = async (categories, tradeType) => {
-  const arrCategories = categories.split(',');
-  const arrTradeTypes = tradeType.split(',');
+  const arrCategories = categories.split(",");
+  const arrTradeTypes = tradeType.split(",");
   const filteredMaps = await estateDao.getFilteredMaps(
     arrCategories,
     arrTradeTypes
@@ -108,9 +108,9 @@ const putEstateInfo = async (
 const deleteEstateInfo = async (estateId, agentId) => {
   return await estateDao.deleteEstateInfo(estateId, agentId);
 };
-// const search = async (search, take) => {
-//   return await estateDao.search(search, take);
-// };
+const search = async (search) => {
+  return await estateDao.search(search);
+};
 
 module.exports = {
   filteredMaps,
@@ -119,4 +119,5 @@ module.exports = {
   getEstateList,
   deleteEstateInfo,
   putEstateInfo,
+  search,
 };

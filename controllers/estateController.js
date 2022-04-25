@@ -111,15 +111,16 @@ const deleteEstateInfo = async (req, res, next) => {
   }
 };
 
-// const search = async (req, res, next) => {
-//   try {
-//     const { search, take } = req.query;
-//     const searchInfo = await estateService.search(search, take);
-//     return res.status(200).json(searchInfo);
-//   } catch (err) {
-//     next(err);
-//   }
-// };
+const search = async (req, res, next) => {
+  try {
+    // const {꼭지점두개}= req.headers
+    const { search } = req.query;
+    const searchInfo = await estateService.search(search);
+    return res.status(200).json(searchInfo);
+  } catch (err) {
+    next(err);
+  }
+};
 module.exports = {
   filteredMaps,
   createEstateInfo,
@@ -127,4 +128,5 @@ module.exports = {
   getEstateList,
   deleteEstateInfo,
   putEstateInfo,
+  search,
 };

@@ -134,18 +134,33 @@ const getEstateInfo = async (estateId, agentId) => {
 };
 
 const getEstateList = async (agentId) => {
-  return await prisma.realEstates.findMany({
+  const estateId = await prisma.realEstates.findMany({
     where: { real_estate_agent_id: Number(agentId) },
-    select: {
-      id: true,
-      price_main: true,
-      price_deposit: true,
-      price_monthly: true,
-      category_id: true,
-      created_at: true,
-    },
+    select: { id: true },
   });
+  let result = [];
+  for (i = 0; i < estateId.length; i++) {
+    result[i] = await prisma.realEstates.findUnique({
+      where: { id: estateId[i].id },
+      select: {
+        id: true,
+        price_main: true,
+        price_deposit: true,
+        price_monthly: true,
+        category_id: true,
+        created_at: true,
+        users_real_estate_likes: {
+          where: { real_estate_id: Number(`${estateId[i].id}`) },
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
+  }
+  return result;
 };
+
 const putEstateInfo = async (
   estateId,
   address_main,
@@ -209,9 +224,20 @@ const deleteEstateInfo = async (estateId, agentId) => {
   `;
 };
 
-// const search = async (search, take) => {
-//   await prisma.realEstates.findMany();
-// };
+const search = async (search) => {
+  await prisma.realEstates.findMany({
+    where: { address_main: ILIKE(`%${search}%`) },
+    select: {
+      supply_size: true,
+      current_floor: true,
+      price_main: true,
+      price_deposit: true,
+      price_monthly: true,
+      description_title: true,
+      trades_real_estates: { select: { trade_id: true } },
+    },
+  });
+};
 module.exports = {
   getFilteredMaps,
   createEstateInfo,
@@ -219,4 +245,5 @@ module.exports = {
   getEstateInfo,
   putEstateInfo,
   deleteEstateInfo,
+  search,
 };
