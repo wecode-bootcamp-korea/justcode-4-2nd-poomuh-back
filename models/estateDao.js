@@ -1,4 +1,4 @@
-const { PrismaClient } = require("@prisma/client");
+const { PrismaClient, Prisma } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 const getFilteredMaps = async (user, arrTradeTypes) => {
@@ -38,6 +38,7 @@ const getFilteredMaps = async (user, arrTradeTypes) => {
     GROUP BY re.id, c.type
   `;
 };
+
 const createEstateInfo = async (
   address_main,
   address_dong,

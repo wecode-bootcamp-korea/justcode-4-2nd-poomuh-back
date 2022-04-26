@@ -4,9 +4,9 @@ const router = express.Router();
 const estateController = require('../controllers/estateController');
 const { keyErrorEstate } = require('../middlewares/keyError');
 const {
-  agentsValidateToken,
   usersValidateToken,
-} = require('../middlewares/agentsValidateToken');
+  agentsValidateToken,
+} = require('../middlewares/validateToken');
 
 router.get('/', estateController.filteredMaps);
 router.get('/users', usersValidateToken, estateController.filteredMaps);

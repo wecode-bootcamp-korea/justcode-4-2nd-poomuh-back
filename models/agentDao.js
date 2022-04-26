@@ -1,4 +1,4 @@
-const { PrismaClient } = require("@prisma/client");
+const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 const createAgent = async (email, encryptPw, username, nickname) => {
@@ -14,15 +14,23 @@ const checkByEmail = async (email) => {
     WHERE email= ${email}
   `;
 };
-const getAgentByUserId = async (number) => {
+const getAgentIdById = async (number) => {
   return await prisma.$queryRaw`
     SELECT id FROM real_estate_agents
     WHERE ID = ${number}
   `;
 };
 
+const getAgentEmailByEmail = async (email) => {
+  return await prisma.$queryRaw`
+    SELECT email FROM real_estate_agents
+    WHERE email = ${email}
+  `;
+};
+
 module.exports = {
   createAgent,
   checkByEmail,
-  getAgentByUserId,
+  getAgentIdById,
+  getAgentEmailByEmail,
 };
