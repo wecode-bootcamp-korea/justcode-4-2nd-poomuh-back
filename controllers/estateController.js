@@ -113,9 +113,10 @@ const deleteEstateInfo = async (req, res, next) => {
 
 const search = async (req, res, next) => {
   try {
-    // const {꼭지점두개}= req.headers
-    const { search } = req.query;
-    const searchInfo = await estateService.search(search);
+    const a = req.query;
+
+    const searchInfo = await estateService.search(a);
+
     return res.status(200).json(searchInfo);
   } catch (err) {
     next(err);

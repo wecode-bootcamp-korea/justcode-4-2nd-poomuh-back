@@ -108,8 +108,9 @@ const putEstateInfo = async (
 const deleteEstateInfo = async (estateId, agentId) => {
   return await estateDao.deleteEstateInfo(estateId, agentId);
 };
-const search = async (search) => {
-  return await estateDao.search(search);
+const search = async (a) => {
+  console.log("service");
+  return await estateDao.search(a);
 };
 
 module.exports = {

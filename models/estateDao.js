@@ -224,10 +224,23 @@ const deleteEstateInfo = async (estateId, agentId) => {
   `;
 };
 
-const search = async (search) => {
-  await prisma.realEstates.findMany({
-    where: { address_main: ILIKE(`%${search}%`) },
+const search = async (a) => {
+  const { search, large, small } = a;
+  const largearr = large.split(",");
+  const smallarr = small.split(",");
+
+  return await prisma.realEstates.findMany({
+    where: {
+      AND: [
+        { address_main: { contains: search } },
+        { latitude: { gt: smallarr[0] } },
+        { latitude: { lt: largearr[0] } },
+        { longitude: { gt: smallarr[1] } },
+        { longitude: { lt: largearr[1] } },
+      ],
+    },
     select: {
+      id: true,
       supply_size: true,
       current_floor: true,
       price_main: true,
