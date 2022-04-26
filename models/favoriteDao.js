@@ -31,21 +31,14 @@ const getLikeEstatesByUserId = async (user) => {
       re.price_deposit AS priceDeposit,
       re.price_monthly AS priceMonthly,
       c.type AS categoryType,
-      JSON_ARRAYAGG(t.type) AS tradeTypes
-      ${
-        user
-          ? Prisma.sql`
-        , ( SELECT l.real_estate_id 
-        FROM users_real_estates_likes AS l
-        WHERE l.user_id = ${user} AND re.id = l.real_estate_id ) AS isLike
-        `
-          : Prisma.empty
-      }
+      JSON_ARRAYAGG(t.type) AS tradeTypes,
+      ( SELECT l.real_estate_id 
+      FROM users_real_estates_likes AS l
+      WHERE l.user_id = ${user} AND re.id = l.real_estate_id ) AS isLike
     FROM real_estates AS re
     JOIN categories AS c ON re.category_id = c.id
     JOIN trades_real_estates AS tre ON tre.real_estate_id = re.id
     JOIN trades AS t ON t.id = tre.trade_id
-    WHERE re.id = ${user}
     GROUP BY re.id, c.type
   `;
 };

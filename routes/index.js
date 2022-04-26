@@ -5,12 +5,12 @@ const testRoute = require('./testRoute');
 const userRoute = require('./userRoute');
 const agentRoute = require('./agentRoute');
 const estateRoute = require('./estateRoute');
-const likeRoute = require('./likeRoute');
+const favoriteRoute = require('./favoriteRoute');
 
 router.use('/', testRoute);
 router.use('/users', userRoute);
 router.use('/agents', agentRoute);
 router.use('/estates', estateRoute);
-router.use('/likes', likeRoute);
+router.use('/favorites', favoriteRoute);
 
 module.exports = router;
