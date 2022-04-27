@@ -1,4 +1,4 @@
-const { PrismaClient, Prisma } = require('@prisma/client');
+const { PrismaClient, Prisma } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 const getFilteredMaps = async (user, arrTradeTypes) => {
@@ -40,30 +40,33 @@ const getFilteredMaps = async (user, arrTradeTypes) => {
   `;
 };
 
-const createEstateInfo = async (
-  address_main,
-  address_dong,
-  address_ho,
-  latitude,
-  longitude,
-  supply_size,
-  exclusive_size,
-  building_floor,
-  current_floor,
-  available_date,
-  description_title,
-  description_detail,
-  price_main,
-  price_deposit,
-  price_monthly,
-  heat_id,
-  category_id,
-  real_estate_agent_id,
-  trade_id
-) => {
+const createEstateInfo = async (body) => {
+  const {
+    address_main,
+    building_name,
+    address_dong,
+    address_ho,
+    latitude,
+    longitude,
+    supply_size,
+    exclusive_size,
+    building_floor,
+    current_floor,
+    available_date,
+    description_title,
+    description_detail,
+    price_main,
+    price_deposit,
+    price_monthly,
+    heat_id,
+    category_id,
+    real_estate_agent_id,
+    trade_id,
+  } = body;
   await prisma.$queryRaw`
   INSERT INTO real_estates( 
     address_main,
+    building_name,
     address_dong,
     address_ho,
     latitude,
@@ -84,6 +87,7 @@ const createEstateInfo = async (
     )
   VALUES (
     ${address_main},
+    ${building_name},
     ${address_dong},
     ${address_ho},
     ${latitude},
@@ -106,21 +110,27 @@ const createEstateInfo = async (
 
   const b = await prisma.$queryRaw`
     SELECT id FROM real_estates
-    WHERE address_ho=${address_ho} AND address_main=${address_main}`;
-  const id = b[0].id;
-  for (i = 0; i < trade_id.length; i++) {
-    const trade = trade_id[i];
-    await prisma.$queryRaw`
+    WHERE address_ho=${address_ho} AND address_main=${address_main} AND current_floor=${current_floor}`;
+  console.log(b);
+  for (i = 0; i < b.length; i++) {
+    const id = b[i].id;
+    console.log(id);
+    for (j = 0; j < trade_id.length; j++) {
+      console.log("message:", trade_id[j]);
+      const trade = trade_id[j];
+      await prisma.$queryRaw`
     INSERT INTO trades_real_estates (trade_id,real_estate_id) VALUES (${trade},${id})
     `;
+    }
+    return;
   }
-  return;
 };
 const getEstateInfo = async (estateId, agentId) => {
   return await prisma.realEstates.findUnique({
     where: { id: Number(estateId) },
     select: {
       id: true,
+      building_name: true,
       address_main: true,
       address_dong: true,
       address_ho: true,
@@ -144,21 +154,36 @@ const getEstateInfo = async (estateId, agentId) => {
 };
 
 const getEstateList = async (agentId) => {
-  return await prisma.realEstates.findMany({
+  const estateId = await prisma.realEstates.findMany({
     where: { real_estate_agent_id: Number(agentId) },
-    select: {
-      id: true,
-      price_main: true,
-      price_deposit: true,
-      price_monthly: true,
-      category_id: true,
-      created_at: true,
-    },
+    select: { id: true },
   });
+  let result = [];
+  for (i = 0; i < estateId.length; i++) {
+    result[i] = await prisma.realEstates.findUnique({
+      where: { id: estateId[i].id },
+      select: {
+        id: true,
+        price_main: true,
+        price_deposit: true,
+        price_monthly: true,
+        category_id: true,
+        created_at: true,
+        users_real_estate_likes: {
+          where: { real_estate_id: Number(`${estateId[i].id}`) },
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
+  }
+  return result;
 };
 const putEstateInfo = async (
   estateId,
   address_main,
+  building_name,
   address_dong,
   address_ho,
   latitude,
@@ -182,6 +207,7 @@ const putEstateInfo = async (
   UPDATE real_estates
   SET 
     address_main= ${address_main},
+    building_name=${building_name},
     address_dong=${address_dong},
     address_ho = ${address_ho},
     latitude= ${latitude},
