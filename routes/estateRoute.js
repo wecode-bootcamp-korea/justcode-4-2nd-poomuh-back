@@ -3,9 +3,13 @@ const router = express.Router();
 
 const estateController = require("../controllers/estateController");
 const { keyErrorEstate } = require("../middlewares/keyError");
-const { agentsValidateToken } = require("../middlewares/agentsValidateToken");
+const {
+  usersValidateToken,
+  agentsValidateToken,
+} = require("../middlewares/validateToken");
 
 router.get("/", estateController.filteredMaps);
+router.get("/users", usersValidateToken, estateController.filteredMaps);
 router.post(
   "/",
   keyErrorEstate,
