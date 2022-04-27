@@ -108,11 +108,13 @@ const deleteEstateInfo = async (req, res, next) => {
 
 const search = async (req, res, next) => {
   try {
-    const a = req.query;
+    const { search } = req.query;
 
-    const searchInfo = await estateService.search(a);
-
-    return res.status(200).json(searchInfo);
+    const searchInfo = await estateService.search(search);
+    console.log(searchInfo[0]);
+    return res
+      .status(200)
+      .json({ office: searchInfo[0], apartment: searchInfo[1] });
   } catch (err) {
     next(err);
   }

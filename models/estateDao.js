@@ -167,12 +167,12 @@ const getEstateList = async (agentId) => {
         price_main: true,
         price_deposit: true,
         price_monthly: true,
-        category_id: true,
+        categories: { select: { type: true } },
         created_at: true,
         users_real_estate_likes: {
           where: { real_estate_id: Number(`${estateId[i].id}`) },
           select: {
-            id: true,
+            user_id: true,
           },
         },
       },
@@ -246,32 +246,45 @@ const deleteEstateInfo = async (estateId, agentId) => {
   `;
 };
 
-const search = async (a) => {
-  const { search, large, small } = a;
-  const largearr = large.split(",");
-  const smallarr = small.split(",");
-
-  return await prisma.realEstates.findMany({
+const search = async (search) => {
+  const office = await prisma.realEstates.findMany({
     where: {
       AND: [
-        { address_main: { contains: search } },
-        { latitude: { gt: smallarr[0] } },
-        { latitude: { lt: largearr[0] } },
-        { longitude: { gt: smallarr[1] } },
-        { longitude: { lt: largearr[1] } },
+        { category_id: 3 },
+        {
+          OR: [
+            { address_main: { contains: search } },
+            { building_name: { contains: search } },
+          ],
+        },
       ],
     },
     select: {
-      id: true,
-      supply_size: true,
-      current_floor: true,
-      price_main: true,
-      price_deposit: true,
-      price_monthly: true,
-      description_title: true,
-      trades_real_estates: { select: { trade_id: true } },
+      building_name: true,
+      address_main: true,
+      categories: { select: { type: true } },
     },
   });
+  const apartment = await prisma.realEstates.findMany({
+    where: {
+      AND: [
+        { category_id: 4 },
+        {
+          OR: [
+            { address_main: { contains: search } },
+            { building_name: { contains: search } },
+          ],
+        },
+      ],
+    },
+    select: {
+      building_name: true,
+      address_main: true,
+      categories: { select: { type: true } },
+    },
+  });
+  const room = [office, apartment];
+  return room;
 };
 module.exports = {
   getFilteredMaps,
