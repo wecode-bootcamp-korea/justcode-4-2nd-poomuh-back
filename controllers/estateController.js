@@ -1,9 +1,9 @@
-const estateService = require('../services/estateService');
-const errUtils = require('../utils/errUtils');
+const estateService = require("../services/estateService");
+const errUtils = require("../utils/errUtils");
 
 const filteredMaps = async (req, res, next) => {
   try {
-    const user = req.user ? req.user : '';
+    const user = req.user ? req.user : "";
     const { tradeType } = req.query;
 
     const filteredMaps = await estateService.filteredMaps(user, tradeType);
@@ -16,8 +16,9 @@ const filteredMaps = async (req, res, next) => {
 
 const createEstateInfo = async (req, res, next) => {
   try {
-    await estateService.createEstateInfo(req);
-    return res.status(200).json({ message: '등록 성공!' });
+    const body = req.body;
+    await estateService.createEstateInfo(body);
+    return res.status(200).json({ message: "등록 성공!" });
   } catch (err) {
     next(err);
   }
@@ -78,7 +79,7 @@ const putEstateInfo = async (req, res, next) => {
       real_estate_agent_id,
       trade_id
     );
-    return res.status(200).json({ message: '업데이트 성공' });
+    return res.status(200).json({ message: "업데이트 성공" });
   } catch (err) {
     next(err);
   }
@@ -97,7 +98,7 @@ const deleteEstateInfo = async (req, res, next) => {
     const estateId = req.params.id;
     const agentId = req.agent;
     await estateService.deleteEstateInfo(estateId, agentId);
-    return res.status(200).json({ message: '삭제 성공!' });
+    return res.status(200).json({ message: "삭제 성공!" });
   } catch (err) {
     next(err);
   }
