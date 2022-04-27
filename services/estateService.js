@@ -18,6 +18,7 @@ const getEstateList = async (estateId, agentId) => {
 const putEstateInfo = async (
   estateId,
   address_main,
+  building_name,
   address_dong,
   address_ho,
   latitude,
@@ -40,6 +41,7 @@ const putEstateInfo = async (
   return await estateDao.putEstateInfo(
     estateId,
     address_main,
+    building_name,
     address_dong,
     address_ho,
     latitude,

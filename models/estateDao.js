@@ -129,6 +129,7 @@ const getEstateInfo = async (estateId, agentId) => {
     where: { id: Number(estateId) },
     select: {
       id: true,
+      building_name: true,
       address_main: true,
       address_dong: true,
       address_ho: true,
@@ -181,6 +182,7 @@ const getEstateList = async (agentId) => {
 const putEstateInfo = async (
   estateId,
   address_main,
+  building_name,
   address_dong,
   address_ho,
   latitude,
@@ -204,6 +206,7 @@ const putEstateInfo = async (
   UPDATE real_estates
   SET 
     address_main= ${address_main},
+    building_name=${building_name},
     address_dong=${address_dong},
     address_ho = ${address_ho},
     latitude= ${latitude},

@@ -38,6 +38,7 @@ const putEstateInfo = async (req, res, next) => {
     const estateId = req.params.id;
     const {
       address_main,
+      building_name,
       address_dong,
       address_ho,
       latitude,
@@ -60,6 +61,7 @@ const putEstateInfo = async (req, res, next) => {
     await estateService.putEstateInfo(
       estateId,
       address_main,
+      building_name,
       address_dong,
       address_ho,
       latitude,
