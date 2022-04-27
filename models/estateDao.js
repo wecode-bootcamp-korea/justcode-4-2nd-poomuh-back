@@ -5,6 +5,7 @@ const getFilteredMaps = async (user, arrTradeTypes) => {
   return await prisma.$queryRaw`
     SELECT
       re.address_main AS addresMain,
+      re.building_name as buildName,
       re.address_ho AS addressHo,
       re.latitude AS lat,
       re.longitude AS lng,

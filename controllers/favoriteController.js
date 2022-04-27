@@ -15,14 +15,25 @@ const changeLike = async (req, res, next) => {
 
 const getLikeEstates = async (req, res, next) => {
   try {
-    const user = req.user[0];
+    const user = req.user;
     const likeEstates = await favoriteService.getLikeEstates(user);
     return res
       .status(200)
-      .json({ messgae: 'LIKE_ESTATES_IS_RENDERED', liked: likeEstates });
+      .json({ messgae: 'LIKE_ESTATES_IS_RENDERED', likeEstates });
   } catch (err) {
     next(err);
   }
 };
 
-module.exports = { changeLike, getLikeEstates };
+const getRecentEstates = async (req, res, next) => {
+  try {
+    const ids = req.headers.recent;
+    const recent = await favoriteService.getRecentEstates(ids);
+    return res
+      .status(200)
+      .json({ messgae: 'RECENT_ESTATES_IS_RENDERED', recent });
+  } catch (err) {
+    next(err);
+  }
+};
+module.exports = { changeLike, getLikeEstates, getRecentEstates };
