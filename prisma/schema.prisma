@@ -41,7 +41,7 @@ model RealEstateAgents {
 model RealEstates {
   id                   Int       @id @default(autoincrement())
   address_main         String
-  building_name        String
+  building_name        String?
   address_dong         String?
   address_ho           String
   latitude             Decimal   @db.Decimal(18, 15)
