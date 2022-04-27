@@ -13,7 +13,13 @@ const changeLike = async (user, estate) => {
 };
 
 const getLikeEstates = async (user) => {
-  return await favoriteDao.getLikeEstatesByUserId(user);
+  const ids = '';
+  return await favoriteDao.getFavEstatesById(user, ids);
 };
 
-module.exports = { changeLike, getLikeEstates };
+const getRecentEstates = async (ids) => {
+  const user = '';
+  return await favoriteDao.getFavEstatesById(user, ids);
+};
+
+module.exports = { changeLike, getLikeEstates, getRecentEstates };
