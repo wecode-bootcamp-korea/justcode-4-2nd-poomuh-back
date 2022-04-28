@@ -14,11 +14,11 @@ const signUp = async (email, password, username, nickname) => {
 
   const emailRegex =
     /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/;
-  const nicknameRegex = /^[a-zA-Zㄱ-힣][a-zA-Zㄱ-힣 ]{0,10}$/;
+  // const nicknameRegex = /^[a-zA-Zㄱ-힣][a-zA-Zㄱ-힣 ]{0,10}$/;
   const passwordRegex = /(?=.*[a-zA-Z]{2,20}).{8,20}$/;
   const regex = {
     email: emailRegex.test(email),
-    nickname: nicknameRegex.test(nickname),
+    // nickname: nicknameRegex.test(nickname),
     password: passwordRegex.test(password),
   };
   for (const key in regex) {
