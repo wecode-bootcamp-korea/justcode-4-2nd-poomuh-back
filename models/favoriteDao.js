@@ -35,8 +35,8 @@ const getFavEstatesById = async (user, arrIds, state) => {
       c.type AS category_type,
       JSON_ARRAYAGG(t.type) AS trade_type,
       ( SELECT l.real_estate_id 
-              FROM users_real_estates_likes AS l
-              WHERE l.user_id = ${user} AND re.id = l.real_estate_id ) AS is_like
+        FROM users_real_estates_likes AS l
+        WHERE l.user_id = ${user} AND re.id = l.real_estate_id ) AS is_like
       ${
         state !== 'recent'
           ? Prisma.sql`
@@ -51,7 +51,6 @@ const getFavEstatesById = async (user, arrIds, state) => {
               GROUP BY re.id, c.type
             `
           : Prisma.sql`
-          
               FROM real_estates AS re
               JOIN categories AS c ON re.category_id = c.id
               JOIN trades_real_estates AS tre ON tre.real_estate_id = re.id
