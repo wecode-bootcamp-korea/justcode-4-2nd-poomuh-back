@@ -20,7 +20,7 @@ const deleteLike = async (user, estate) => {
   `;
 };
 
-const getFavEstatesById = async (user, arrIds) => {
+const getFavEstatesById = async (user, arrIds, state) => {
   return await prisma.$queryRaw`
     SELECT
       re.id,
@@ -33,9 +33,12 @@ const getFavEstatesById = async (user, arrIds) => {
       re.price_monthly,
       re.room_image AS image_url,
       c.type AS category_type,
-      JSON_ARRAYAGG(t.type) AS trade_type
+      JSON_ARRAYAGG(t.type) AS trade_type,
+      ( SELECT l.real_estate_id 
+              FROM users_real_estates_likes AS l
+              WHERE l.user_id = ${user} AND re.id = l.real_estate_id ) AS is_like
       ${
-        user
+        state !== 'recent'
           ? Prisma.sql`
               ,
               l.real_estate_id AS is_like
@@ -48,6 +51,7 @@ const getFavEstatesById = async (user, arrIds) => {
               GROUP BY re.id, c.type
             `
           : Prisma.sql`
+          
               FROM real_estates AS re
               JOIN categories AS c ON re.category_id = c.id
               JOIN trades_real_estates AS tre ON tre.real_estate_id = re.id
