@@ -2,8 +2,8 @@ const { PrismaClient, Prisma } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 const getFilteredMaps = async (user, arrTradeTypes, keyword, headers) => {
-  const offset = headers.offset ? headers.offset : '';
-  const limit = headers.limit ? headers.limit : '';
+  const offset = headers.offset ? headers.offset : "";
+  const limit = headers.limit ? headers.limit : "";
   const east = headers.east ? headers.east : 999;
   const west = headers.west ? headers.west : 0;
   const south = headers.south ? headers.south : 0;
@@ -167,6 +167,10 @@ const getEstateInfo = async (estateId, agentId) => {
       heat_id: true,
       category_id: true,
       real_estate_agent_id: true,
+      trades_real_estates: {
+        where: { real_estate_id: Number(estateId) },
+        select: { trade_id: true },
+      },
     },
   });
 };
@@ -199,30 +203,31 @@ const getEstateList = async (agentId) => {
   return result;
 };
 
-const putEstateInfo = async (
-  estateId,
-  address_main,
-  building_name,
-  address_dong,
-  address_ho,
-  latitude,
-  longitude,
-  supply_size,
-  exclusive_size,
-  building_floor,
-  current_floor,
-  available_date,
-  description_title,
-  description_detail,
-  price_main,
-  price_deposit,
-  price_monthly,
-  heat_id,
-  category_id,
-  real_estate_agent_id,
-  trade_id
-) => {
-  const a = await prisma.$queryRaw`
+const putEstateInfo = async (estateId, body) => {
+  const {
+    address_main,
+    building_name,
+    address_dong,
+    address_ho,
+    latitude,
+    longitude,
+    supply_size,
+    exclusive_size,
+    building_floor,
+    current_floor,
+    available_date,
+    description_title,
+    description_detail,
+    price_main,
+    price_deposit,
+    price_monthly,
+    heat_id,
+    category_id,
+    real_estate_agent_id,
+    trade_id,
+  } = body;
+
+  await prisma.$queryRaw`
   UPDATE real_estates
   SET 
     address_main= ${address_main},
@@ -255,7 +260,7 @@ const putEstateInfo = async (
      INSERT trades_real_estates (trade_id,real_estate_id) VALUES (${trade},${estateId})
       `;
   }
-  return a;
+  return;
 };
 const deleteEstateInfo = async (estateId, agentId) => {
   return await prisma.$queryRaw`
