@@ -233,11 +233,14 @@ const putEstateInfo = async (
     real_estate_agent_id=${real_estate_agent_id}
     WHERE id = ${estateId} 
     `;
-
+  await prisma.$queryRaw`
+    DELETE FROM trades_real_estates WHERE real_estate_id=${estateId}
+    `;
   for (i = 0; i < trade_id.length; i++) {
     const trade = trade_id[i];
+    console.log("trade :", trade_id[i]);
     await prisma.$queryRaw`
-      UPDATE trades_real_estates SET trade_id=${trade} WHERE real_estate_id=${estateId}
+     INSERT trades_real_estates (trade_id,real_estate_id) VALUES (${trade},${estateId})
       `;
   }
   return a;
