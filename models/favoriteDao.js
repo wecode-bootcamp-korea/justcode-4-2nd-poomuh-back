@@ -20,7 +20,7 @@ const deleteLike = async (user, estate) => {
   `;
 };
 
-const getFavEstatesById = async (user, ids) => {
+const getFavEstatesById = async (user, arrIds) => {
   return await prisma.$queryRaw`
     SELECT
       re.id,
@@ -32,21 +32,30 @@ const getFavEstatesById = async (user, ids) => {
       re.price_deposit AS priceDeposit,
       re.price_monthly AS priceMonthly,
       c.type AS categoryType,
-      JSON_ARRAYAGG(t.type) AS tradeTypes,
-      l.real_estate_id AS isLike
-    FROM real_estates AS re
-    JOIN categories AS c ON re.category_id = c.id
-    JOIN trades_real_estates AS tre ON tre.real_estate_id = re.id
-    JOIN trades AS t ON t.id = tre.trade_id
-    JOIN users_real_estates_likes AS l ON l.real_estate_id = re.id
-    ${
-      user
-        ? Prisma.sql`WHERE l.user_id = ${user}`
-        : Prisma.sql`WHERE re.id IN (${Prisma.join(ids)})`
-    }
-    GROUP BY re.id, c.type
-    ${user ? Prisma.empty : `ORDER BY FIELD(re.id, ${Prisma.join(ids)})`}
-  `;
+      JSON_ARRAYAGG(t.type) AS tradeTypes
+      ${
+        user
+          ? Prisma.sql`
+              ,
+              l.real_estate_id AS isLike
+              FROM real_estates AS re
+              JOIN categories AS c ON re.category_id = c.id
+              JOIN trades_real_estates AS tre ON tre.real_estate_id = re.id
+              JOIN trades AS t ON t.id = tre.trade_id
+              JOIN users_real_estates_likes AS l ON l.real_estate_id = re.id
+              WHERE l.user_id = ${user}
+              GROUP BY re.id, c.type
+            `
+          : Prisma.sql`
+              FROM real_estates AS re
+              JOIN categories AS c ON re.category_id = c.id
+              JOIN trades_real_estates AS tre ON tre.real_estate_id = re.id
+              JOIN trades AS t ON t.id = tre.trade_id
+              WHERE re.id IN (${Prisma.join(arrIds)})
+              GROUP BY re.id, c.type
+              ORDER BY FIELD(re.id, ${Prisma.join(arrIds)})
+            `
+      }`;
 };
 
 module.exports = {

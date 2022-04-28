@@ -19,7 +19,8 @@ const getLikeEstates = async (user) => {
 
 const getRecentEstates = async (ids) => {
   const user = '';
-  return await favoriteDao.getFavEstatesById(user, ids);
+  const arrIds = ids.split(',').reverse();
+  return await favoriteDao.getFavEstatesById(user, arrIds);
 };
 
 module.exports = { changeLike, getLikeEstates, getRecentEstates };
