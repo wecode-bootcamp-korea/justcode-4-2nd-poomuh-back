@@ -1,7 +1,7 @@
-const { PrismaClient, Prisma } = require("@prisma/client");
+const { PrismaClient, Prisma } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-const getFilteredMaps = async (user, arrTradeTypes, keyword) => {
+const getFilteredMaps = async (user, arrTradeTypes, keyword, offset, limit) => {
   return await prisma.$queryRaw`
     SELECT
       re.address_main AS addresMain,
@@ -43,6 +43,12 @@ const getFilteredMaps = async (user, arrTradeTypes, keyword) => {
       ((re.building_name LIKE ${keyword}) OR
       (re.address_main LIKE ${keyword}))
     GROUP BY re.id
+    ${
+      offset && limit
+        ? Prisma.sql`LIMIT ${limit} OFFSET ${offset}`
+        : Prisma.empty
+    }
+    
   `;
 };
 
@@ -122,7 +128,7 @@ const createEstateInfo = async (body) => {
   const id = b[0].id;
   console.log(id);
   for (j = 0; j < trade_id.length; j++) {
-    console.log("message:", trade_id[j]);
+    console.log('message:', trade_id[j]);
     const trade = trade_id[j];
     await prisma.$queryRaw`
     INSERT INTO trades_real_estates (trade_id,real_estate_id) VALUES (${trade},${id})
