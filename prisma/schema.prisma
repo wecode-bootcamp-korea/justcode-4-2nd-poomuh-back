@@ -44,6 +44,7 @@ model RealEstates {
   building_name        String?
   address_dong         String?
   address_ho           String
+  image                String?
   latitude             Decimal   @db.Decimal(18, 15)
   longitude            Decimal   @db.Decimal(18, 15)
   supply_size          Decimal   @db.Decimal(5, 2)
