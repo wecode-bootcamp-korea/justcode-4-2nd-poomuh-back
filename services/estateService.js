@@ -1,21 +1,24 @@
-const estateDao = require("../models/estateDao");
+const estateDao = require('../models/estateDao');
 
 const filteredClusters = async (tradeType, headers) => {
-  const arrTradeTypes = tradeType.split(",");
+  const arrTradeTypes = tradeType.split(',');
+  const arrLatLng = headers.latlng ? headers.latlng.split(',') : '';
   const filteredClusters = await estateDao.getfilteredClusters(
     arrTradeTypes,
-    headers
+    arrLatLng
   );
 
   return filteredClusters;
 };
 
 const filteredEstates = async (user, tradeType, headers) => {
-  const arrTradeTypes = tradeType.split(",");
+  const arrTradeTypes = tradeType.split(',');
+  const arrLatLng = headers.latlng ? headers.latlng.split(',') : '';
   const filteredEstates = await estateDao.getfilteredEstates(
     user,
     arrTradeTypes,
-    headers
+    headers,
+    arrLatLng
   );
 
   return filteredEstates;
