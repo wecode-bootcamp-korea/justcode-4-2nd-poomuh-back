@@ -4,9 +4,7 @@ const errUtils = require('../utils/errUtils');
 const filteredMaps = async (req, res, next) => {
   try {
     const user = req.user ? req.user : '';
-    const offset = req.headers.offset ? req.headers.offset : '';
-    const limit = req.headers.limit ? req.headers.limit : '';
-    console.log(offset, limit);
+    const headers = req.headers;
 
     const { tradeType, search } = req.query;
 
@@ -14,8 +12,7 @@ const filteredMaps = async (req, res, next) => {
       user,
       tradeType,
       search,
-      offset,
-      limit
+      headers
     );
 
     return res.status(200).json({ map: filteredMaps });

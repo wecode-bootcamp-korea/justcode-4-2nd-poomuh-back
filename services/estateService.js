@@ -1,14 +1,13 @@
 const estateDao = require('../models/estateDao');
 
-const filteredMaps = async (user, tradeType, search, offset, limit) => {
+const filteredMaps = async (user, tradeType, search, headers) => {
   const arrTradeTypes = tradeType.split(',');
   const keyword = `%${search}%`;
   const filteredMaps = await estateDao.getFilteredMaps(
     user,
     arrTradeTypes,
     keyword,
-    offset,
-    limit
+    headers
   );
 
   return filteredMaps;

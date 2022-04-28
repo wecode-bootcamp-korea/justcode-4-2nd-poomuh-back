@@ -1,7 +1,14 @@
 const { PrismaClient, Prisma } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-const getFilteredMaps = async (user, arrTradeTypes, keyword, offset, limit) => {
+const getFilteredMaps = async (user, arrTradeTypes, keyword, headers) => {
+  const offset = headers.offset ? headers.offset : '';
+  const limit = headers.limit ? headers.limit : '';
+  const east = headers.east ? headers.east : 999;
+  const west = headers.west ? headers.west : 0;
+  const south = headers.south ? headers.south : 0;
+  const north = headers.north ? headers.north : 99;
+
   return await prisma.$queryRaw`
     SELECT
       re.address_main AS addresMain,
@@ -33,8 +40,8 @@ const getFilteredMaps = async (user, arrTradeTypes, keyword, offset, limit) => {
     JOIN trades_real_estates AS tre ON tre.real_estate_id = re.id
     JOIN trades AS t ON t.id = tre.trade_id
     WHERE
-      (re.latitude BETWEEN 0 AND 99) AND
-      (re.longitude BETWEEN 0 AND 999) AND
+      (re.latitude BETWEEN ${south} AND ${north}) AND
+      (re.longitude BETWEEN ${west} AND ${east}) AND
       ${
         arrTradeTypes[0]
           ? Prisma.sql`(t.type IN (${Prisma.join(arrTradeTypes)})) AND`
