@@ -1,4 +1,4 @@
-const { PrismaClient, Prisma } = require('@prisma/client');
+const { PrismaClient, Prisma } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 const getFilteredMaps = async (user, arrTradeTypes, keyword) => {
@@ -118,18 +118,17 @@ const createEstateInfo = async (body) => {
     SELECT id FROM real_estates
     WHERE address_ho=${address_ho} AND address_main=${address_main} AND current_floor=${current_floor}`;
   console.log(b);
-  for (i = 0; i < b.length; i++) {
-    const id = b[i].id;
-    console.log(id);
-    for (j = 0; j < trade_id.length; j++) {
-      console.log('message:', trade_id[j]);
-      const trade = trade_id[j];
-      await prisma.$queryRaw`
+
+  const id = b[0].id;
+  console.log(id);
+  for (j = 0; j < trade_id.length; j++) {
+    console.log("message:", trade_id[j]);
+    const trade = trade_id[j];
+    await prisma.$queryRaw`
     INSERT INTO trades_real_estates (trade_id,real_estate_id) VALUES (${trade},${id})
     `;
-    }
-    return;
   }
+  return;
 };
 const getEstateInfo = async (estateId, agentId) => {
   return await prisma.realEstates.findUnique({
@@ -173,12 +172,12 @@ const getEstateList = async (agentId) => {
         price_main: true,
         price_deposit: true,
         price_monthly: true,
-        category_id: true,
+        categories: { select: { type: true } },
         created_at: true,
         users_real_estate_likes: {
           where: { real_estate_id: Number(`${estateId[i].id}`) },
           select: {
-            id: true,
+            user_id: true,
           },
         },
       },
@@ -186,6 +185,7 @@ const getEstateList = async (agentId) => {
   }
   return result;
 };
+
 const putEstateInfo = async (
   estateId,
   address_main,
@@ -251,9 +251,46 @@ const deleteEstateInfo = async (estateId, agentId) => {
   `;
 };
 
-// const search = async (search, take) => {
-//   await prisma.realEstates.findMany();
-// };
+const search = async (search) => {
+  const office = await prisma.realEstates.findMany({
+    where: {
+      AND: [
+        { category_id: 3 },
+        {
+          OR: [
+            { address_main: { contains: search } },
+            { building_name: { contains: search } },
+          ],
+        },
+      ],
+    },
+    select: {
+      building_name: true,
+      address_main: true,
+      categories: { select: { type: true } },
+    },
+  });
+  const apartment = await prisma.realEstates.findMany({
+    where: {
+      AND: [
+        { category_id: 4 },
+        {
+          OR: [
+            { address_main: { contains: search } },
+            { building_name: { contains: search } },
+          ],
+        },
+      ],
+    },
+    select: {
+      building_name: true,
+      address_main: true,
+      categories: { select: { type: true } },
+    },
+  });
+  const room = [office, apartment];
+  return room;
+};
 module.exports = {
   getFilteredMaps,
   createEstateInfo,
@@ -261,4 +298,5 @@ module.exports = {
   getEstateInfo,
   putEstateInfo,
   deleteEstateInfo,
+  search,
 };
