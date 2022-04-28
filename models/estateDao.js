@@ -112,18 +112,17 @@ const createEstateInfo = async (body) => {
     SELECT id FROM real_estates
     WHERE address_ho=${address_ho} AND address_main=${address_main} AND current_floor=${current_floor}`;
   console.log(b);
-  for (i = 0; i < b.length; i++) {
-    const id = b[i].id;
-    console.log(id);
-    for (j = 0; j < trade_id.length; j++) {
-      console.log("message:", trade_id[j]);
-      const trade = trade_id[j];
-      await prisma.$queryRaw`
+
+  const id = b[0].id;
+  console.log(id);
+  for (j = 0; j < trade_id.length; j++) {
+    console.log("message:", trade_id[j]);
+    const trade = trade_id[j];
+    await prisma.$queryRaw`
     INSERT INTO trades_real_estates (trade_id,real_estate_id) VALUES (${trade},${id})
     `;
-    }
-    return;
   }
+  return;
 };
 const getEstateInfo = async (estateId, agentId) => {
   return await prisma.realEstates.findUnique({

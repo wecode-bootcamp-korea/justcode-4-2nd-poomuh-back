@@ -20,6 +20,6 @@ router.get("/:id", agentsValidateToken, estateController.getEstateInfo);
 router.put("/:id", agentsValidateToken, estateController.putEstateInfo);
 router.get("/list/myList", agentsValidateToken, estateController.getEstateList);
 router.delete("/:id", agentsValidateToken, estateController.deleteEstateInfo);
-router.get("/search/d", estateController.search);
+router.get("/content/search", estateController.search);
 
 module.exports = router;
