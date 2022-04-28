@@ -6,7 +6,6 @@ const userService = require('../services/userService');
 const agentsValidateToken = async (req, res, next) => {
   try {
     const { token } = req.headers;
-    console.log(token);
     if (!token) {
       throw errUtils.errGenerator({
         statusCode: 401,
