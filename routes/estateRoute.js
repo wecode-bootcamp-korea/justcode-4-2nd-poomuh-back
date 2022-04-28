@@ -8,9 +8,13 @@ const {
   agentsValidateToken,
 } = require('../middlewares/validateToken');
 
-router.get('/', estateController.filteredMaps);
-router.get('/scroll', estateController.filteredMaps);
-router.get('/scroll/users', usersValidateToken, estateController.filteredMaps);
+router.get('/', estateController.filteredClusters);
+router.get('/scroll', estateController.filteredEstates);
+router.get(
+  '/scroll/users',
+  usersValidateToken,
+  estateController.filteredEstates
+);
 router.post(
   '/',
   keyErrorEstate,

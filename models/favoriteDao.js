@@ -24,20 +24,20 @@ const getFavEstatesById = async (user, arrIds) => {
   return await prisma.$queryRaw`
     SELECT
       re.id,
-      re.exclusive_size AS excSize,
-      re.current_floor AS currFloor,
-      re.available_date AS ableDate,
-      re.description_title AS descTitle,
-      re.price_main AS priceMain,
-      re.price_deposit AS priceDeposit,
-      re.price_monthly AS priceMonthly,
-      c.type AS categoryType,
-      JSON_ARRAYAGG(t.type) AS tradeTypes
+      re.exclusive_size,
+      re.current_floor,
+      re.available_date,
+      re.description_title,
+      re.price_main,
+      re.price_deposit,
+      re.price_monthly,
+      c.type AS category_type,
+      JSON_ARRAYAGG(t.type) AS trade_type
       ${
         user
           ? Prisma.sql`
               ,
-              l.real_estate_id AS isLike
+              l.real_estate_id AS is_like
               FROM real_estates AS re
               JOIN categories AS c ON re.category_id = c.id
               JOIN trades_real_estates AS tre ON tre.real_estate_id = re.id

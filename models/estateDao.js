@@ -1,37 +1,81 @@
-const { PrismaClient, Prisma } = require("@prisma/client");
+const { PrismaClient, Prisma } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-const getFilteredMaps = async (user, arrTradeTypes, keyword, headers) => {
+const getfilteredClusters = async (arrTradeTypes, headers) => {
+  const { ha, oa, qa, pa } = headers.latlng;
+  const east = oa ? oa : 999;
+  const west = ha ? ha : 0;
+  const south = qa ? qa : 0;
+  const north = pa ? pa : 99;
+  return await prisma.$queryRaw`
+    SELECT
+      re.id,
+      re.address_main,
+      re.building_name,
+      re.address_ho,
+      re.latitude AS lat,
+      re.longitude AS lng,
+      re.supply_size,
+      re.exclusive_size,
+      re.building_floor,
+      re.current_floor,
+      re.description_title,
+      re.price_main,
+      re.price_deposit,
+      re.price_monthly,
+      re.room_image AS image_url,
+      c.type AS category_type,
+      JSON_ARRAYAGG(t.type) AS trade_type
+      FROM real_estates AS re
+      JOIN categories AS c ON re.category_id = c.id
+      JOIN trades_real_estates AS tre ON tre.real_estate_id = re.id
+      JOIN trades AS t ON t.id = tre.trade_id
+      WHERE
+      (re.latitude BETWEEN ${south} AND ${north}) AND
+      (re.longitude BETWEEN ${west} AND ${east})
+      ${
+        arrTradeTypes[0]
+          ? Prisma.sql`AND (t.type IN (${Prisma.join(arrTradeTypes)}))`
+          : Prisma.empty
+      }
+    GROUP BY re.id
+  `;
+};
+
+const getfilteredEstates = async (user, arrTradeTypes, headers) => {
   const offset = headers.offset ? headers.offset : '';
-  const limit = headers.limit ? headers.limit : '';
-  const east = headers.east ? headers.east : 999;
-  const west = headers.west ? headers.west : 0;
-  const south = headers.south ? headers.south : 0;
-  const north = headers.north ? headers.north : 99;
+  const limit = headers.offset ? 4 : '';
+  const { ha, oa, qa, pa } = headers.latlng;
+  const east = oa ? oa : 999;
+  const west = ha ? ha : 0;
+  const south = qa ? qa : 0;
+  const north = pa ? pa : 99;
 
   return await prisma.$queryRaw`
     SELECT
-      re.address_main AS addresMain,
+      re.id,
+      re.address_main,
       re.building_name,
-      re.address_ho AS addressHo,
+      re.address_ho,
       re.latitude AS lat,
       re.longitude AS lng,
-      re.exclusive_size AS excSize,
-      re.building_floor AS buildFloor,
-      re.current_floor AS currFloor,
-      re.available_date AS ableDate,
-      re.description_title AS descTitle,
-      re.price_main AS priceMain,
-      re.price_deposit AS priceDeposit,
-      re.price_monthly AS priceMonthly,
-      c.type AS categoryType,
-      JSON_ARRAYAGG(t.type) AS tradeTypes
+      re.supply_size,
+      re.exclusive_size,
+      re.building_floor,
+      re.current_floor,
+      re.description_title,
+      re.price_main,
+      re.price_deposit,
+      re.price_monthly,
+      re.room_image AS image_url,
+      c.type AS category_type,
+      JSON_ARRAYAGG(t.type) AS trade_type
       ${
         user
           ? Prisma.sql`
         , ( SELECT l.real_estate_id 
         FROM users_real_estates_likes AS l
-        WHERE l.user_id = ${user} AND re.id = l.real_estate_id ) AS isLike
+        WHERE l.user_id = ${user} AND re.id = l.real_estate_id ) AS is_like
         `
           : Prisma.empty
       }
@@ -41,14 +85,12 @@ const getFilteredMaps = async (user, arrTradeTypes, keyword, headers) => {
     JOIN trades AS t ON t.id = tre.trade_id
     WHERE
       (re.latitude BETWEEN ${south} AND ${north}) AND
-      (re.longitude BETWEEN ${west} AND ${east}) AND
+      (re.longitude BETWEEN ${west} AND ${east})
       ${
         arrTradeTypes[0]
-          ? Prisma.sql`(t.type IN (${Prisma.join(arrTradeTypes)})) AND`
+          ? Prisma.sql`AND (t.type IN (${Prisma.join(arrTradeTypes)}))`
           : Prisma.empty
       }
-      ((re.building_name LIKE ${keyword}) OR
-      (re.address_main LIKE ${keyword}))
     GROUP BY re.id
     ${
       offset && limit
@@ -135,7 +177,7 @@ const createEstateInfo = async (body) => {
   const id = b[0].id;
   console.log(id);
   for (j = 0; j < trade_id.length; j++) {
-    console.log("message:", trade_id[j]);
+    console.log('message:', trade_id[j]);
     const trade = trade_id[j];
     await prisma.$queryRaw`
     INSERT INTO trades_real_estates (trade_id,real_estate_id) VALUES (${trade},${id})
@@ -307,7 +349,8 @@ const search = async (search) => {
   return room;
 };
 module.exports = {
-  getFilteredMaps,
+  getfilteredClusters,
+  getfilteredEstates,
   createEstateInfo,
   getEstateList,
   getEstateInfo,
