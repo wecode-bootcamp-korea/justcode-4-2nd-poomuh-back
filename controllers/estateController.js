@@ -1,5 +1,5 @@
-const estateService = require('../services/estateService');
-const errUtils = require('../utils/errUtils');
+const estateService = require("../services/estateService");
+const errUtils = require("../utils/errUtils");
 
 const filteredClusters = async (req, res, next) => {
   try {
@@ -19,7 +19,7 @@ const filteredClusters = async (req, res, next) => {
 
 const filteredEstates = async (req, res, next) => {
   try {
-    const user = req.user ? req.user : '';
+    const user = req.user ? req.user : "";
     const headers = req.headers;
     const tradeType = req.query.tradeType;
 
@@ -39,7 +39,7 @@ const createEstateInfo = async (req, res, next) => {
   try {
     const body = req.body;
     await estateService.createEstateInfo(body);
-    return res.status(200).json({ message: '등록 성공!' });
+    return res.status(200).json({ message: "등록 성공!" });
   } catch (err) {
     next(err);
   }
@@ -57,52 +57,9 @@ const getEstateInfo = async (req, res, next) => {
 const putEstateInfo = async (req, res, next) => {
   try {
     const estateId = req.params.id;
-    const {
-      address_main,
-      building_name,
-      address_dong,
-      address_ho,
-      latitude,
-      longitude,
-      supply_size,
-      exclusive_size,
-      building_floor,
-      current_floor,
-      available_date,
-      description_title,
-      description_detail,
-      price_main,
-      price_deposit,
-      price_monthly,
-      heat_id,
-      category_id,
-      real_estate_agent_id,
-      trade_id,
-    } = req.body;
-    await estateService.putEstateInfo(
-      estateId,
-      address_main,
-      building_name,
-      address_dong,
-      address_ho,
-      latitude,
-      longitude,
-      supply_size,
-      exclusive_size,
-      building_floor,
-      current_floor,
-      available_date,
-      description_title,
-      description_detail,
-      price_main,
-      price_deposit,
-      price_monthly,
-      heat_id,
-      category_id,
-      real_estate_agent_id,
-      trade_id
-    );
-    return res.status(200).json({ message: '업데이트 성공' });
+    const body = req.body;
+    await estateService.putEstateInfo(estateId, body);
+    return res.status(200).json({ message: "업데이트 성공" });
   } catch (err) {
     next(err);
   }
@@ -121,7 +78,7 @@ const deleteEstateInfo = async (req, res, next) => {
     const estateId = req.params.id;
     const agentId = req.agent;
     await estateService.deleteEstateInfo(estateId, agentId);
-    return res.status(200).json({ message: '삭제 성공!' });
+    return res.status(200).json({ message: "삭제 성공!" });
   } catch (err) {
     next(err);
   }
