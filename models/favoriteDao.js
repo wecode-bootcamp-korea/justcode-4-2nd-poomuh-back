@@ -31,6 +31,7 @@ const getFavEstatesById = async (user, arrIds) => {
       re.price_main,
       re.price_deposit,
       re.price_monthly,
+      re.room_image AS image_url,
       c.type AS category_type,
       JSON_ARRAYAGG(t.type) AS trade_type
       ${
