@@ -1,17 +1,31 @@
 const estateService = require("../services/estateService");
 const errUtils = require("../utils/errUtils");
 
-const filteredMaps = async (req, res, next) => {
+const filteredClusters = async (req, res, next) => {
+  try {
+    const headers = req.headers;
+    const tradeType = req.query.tradeType;
+
+    const filteredClusters = await estateService.filteredClusters(
+      tradeType,
+      headers
+    );
+
+    return res.status(200).json({ clusters: filteredClusters });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const filteredEstates = async (req, res, next) => {
   try {
     const user = req.user ? req.user : "";
     const headers = req.headers;
+    const tradeType = req.query.tradeType;
 
-    const { tradeType, search } = req.query;
-
-    const filteredMaps = await estateService.filteredMaps(
+    const filteredMaps = await estateService.filteredEstates(
       user,
       tradeType,
-      search,
       headers
     );
 
@@ -84,7 +98,8 @@ const search = async (req, res, next) => {
   }
 };
 module.exports = {
-  filteredMaps,
+  filteredClusters,
+  filteredEstates,
   createEstateInfo,
   getEstateInfo,
   getEstateList,
