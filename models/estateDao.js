@@ -101,7 +101,7 @@ const getfilteredEstates = async (user, arrTradeTypes, headers) => {
   `;
 };
 
-const createEstateInfo = async (body) => {
+const createEstateInfo = async (body, agent) => {
   const {
     address_main,
     building_name,
@@ -121,7 +121,6 @@ const createEstateInfo = async (body) => {
     price_monthly,
     heat_id,
     category_id,
-    real_estate_agent_id,
     trade_id,
   } = body;
   await prisma.$queryRaw`
@@ -165,19 +164,17 @@ const createEstateInfo = async (body) => {
     ${price_monthly},
     ${heat_id},
     ${category_id},
-    ${real_estate_agent_id}
+    ${agent}
     )
    `;
 
   const b = await prisma.$queryRaw`
     SELECT id FROM real_estates
     WHERE address_ho=${address_ho} AND address_main=${address_main} AND current_floor=${current_floor}`;
-  console.log(b);
 
   const id = b[0].id;
-  console.log(id);
+
   for (j = 0; j < trade_id.length; j++) {
-    console.log("message:", trade_id[j]);
     const trade = trade_id[j];
     await prisma.$queryRaw`
     INSERT INTO trades_real_estates (trade_id,real_estate_id) VALUES (${trade},${id})
@@ -269,7 +266,8 @@ const putEstateInfo = async (estateId, body) => {
     trade_id,
   } = body;
 
-  await prisma.$queryRaw`
+  const [realEstates, updateRealEstates] = await prisma.$transaction([
+    prisma.$queryRaw`
   UPDATE real_estates
   SET 
     address_main= ${address_main},
@@ -292,16 +290,18 @@ const putEstateInfo = async (estateId, body) => {
     category_id=${category_id},
     real_estate_agent_id=${real_estate_agent_id}
     WHERE id = ${estateId} 
-    `;
-  await prisma.$queryRaw`
-    DELETE FROM trades_real_estates WHERE real_estate_id=${estateId}
-    `;
+    `,
+    prisma.$executeRaw`
+    DELETE FROM trades_real_estates WHER real_estate_id=${estateId}
+    `,
+  ]);
   for (i = 0; i < trade_id.length; i++) {
     const trade = trade_id[i];
     await prisma.$queryRaw`
      INSERT trades_real_estates (trade_id,real_estate_id) VALUES (${trade},${estateId})
       `;
   }
+  await prisma.$transaction([a, b]);
   return;
 };
 const deleteEstateInfo = async (estateId, agentId) => {

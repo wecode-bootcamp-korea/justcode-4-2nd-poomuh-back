@@ -17,6 +17,7 @@ const signUp = async (req, res, next) => {
 
 const logIn = async (req, res, next) => {
   try {
+    console.log(req);
     const { email, password } = req.body;
     const token = await agentService.logIn(email, password);
     return res.status(200).json({

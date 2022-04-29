@@ -20,8 +20,8 @@ const filteredEstates = async (user, tradeType, headers) => {
 
   return filteredEstates;
 };
-const createEstateInfo = async (body) => {
-  await estateDao.createEstateInfo(body);
+const createEstateInfo = async (body, agent) => {
+  await estateDao.createEstateInfo(body, agent);
 };
 const getEstateInfo = async (estateId, agentId) => {
   return await estateDao.getEstateInfo(estateId, agentId);

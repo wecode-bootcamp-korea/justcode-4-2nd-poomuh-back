@@ -38,7 +38,8 @@ const filteredEstates = async (req, res, next) => {
 const createEstateInfo = async (req, res, next) => {
   try {
     const body = req.body;
-    await estateService.createEstateInfo(body);
+    const agent = req.agent;
+    await estateService.createEstateInfo(body, agent);
     return res.status(200).json({ message: "등록 성공!" });
   } catch (err) {
     next(err);
@@ -89,7 +90,6 @@ const search = async (req, res, next) => {
     const { search } = req.query;
 
     const searchInfo = await estateService.search(search);
-    console.log(searchInfo[0]);
     return res
       .status(200)
       .json({ office: searchInfo[0], apartment: searchInfo[1] });

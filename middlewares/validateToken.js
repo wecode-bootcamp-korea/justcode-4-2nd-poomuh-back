@@ -1,25 +1,26 @@
-const jwt = require('jsonwebtoken');
-const errUtils = require('../utils/errUtils');
-const agentService = require('../services/agentService');
-const userService = require('../services/userService');
+const jwt = require("jsonwebtoken");
+const errUtils = require("../utils/errUtils");
+const agentService = require("../services/agentService");
+const userService = require("../services/userService");
 
 const agentsValidateToken = async (req, res, next) => {
   try {
     const { token } = req.headers;
+    console.log("token:", token);
     if (!token) {
       throw errUtils.errGenerator({
         statusCode: 401,
-        message: '로그인이 필요합니다.',
+        message: "로그인이 필요합니다.",
       });
     }
     const id = jwt.verify(token, process.env.SECRET_KEY);
-
+    console.log("id:", id);
     const findAgent = await agentService.getAgentByUserId(id.agentId);
 
     if (!findAgent[0]) {
       throw await errUtils.errGenerator({
         statusCode: 400,
-        message: '해당하는 유저를 찾을 수 없습니다. ',
+        message: "해당하는 유저를 찾을 수 없습니다. ",
       });
     }
     req.agent = findAgent[0].id;
@@ -37,7 +38,7 @@ const usersValidateToken = async (req, res, next) => {
     if (!token) {
       throw errUtils.errGenerator({
         statusCode: 401,
-        message: '로그인이 필요합니다.',
+        message: "로그인이 필요합니다.",
       });
     }
 
@@ -49,7 +50,7 @@ const usersValidateToken = async (req, res, next) => {
     if (!findUser[0]) {
       throw errUtils.errGenerator({
         statusCode: 400,
-        message: '해당하는 유저를 찾을 수 없습니다.',
+        message: "해당하는 유저를 찾을 수 없습니다.",
       });
     }
     req.user = findUser[0].id;

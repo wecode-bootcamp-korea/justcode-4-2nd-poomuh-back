@@ -1,4 +1,4 @@
-const errUtils = require('../utils/errUtils');
+const errUtils = require("../utils/errUtils");
 
 const keyErrorEstate = async (req, res, next) => {
   try {
@@ -20,7 +20,6 @@ const keyErrorEstate = async (req, res, next) => {
       price_monthly,
       heat_id,
       category_id,
-      real_estate_agent_id,
     } = req.body;
     const requiredKey = {
       address_main,
@@ -36,21 +35,20 @@ const keyErrorEstate = async (req, res, next) => {
       description_detail,
       heat_id,
       category_id,
-      real_estate_agent_id,
     };
 
     //전세월세 가격이 둘다 안들어왔을때
     if (!price_main && !price_deposit) {
       throw errUtils.errGenerator({
         statusCode: 400,
-        message: 'KeyError : Price',
+        message: "KeyError : Price",
       });
     }
     // 보증금가격은 들어왔는데 월세가 없을때
     if (price_deposit && !price_monthly) {
       throw errUtils.errGenerator({
         statusCode: 400,
-        message: 'KeyError : monthly',
+        message: "KeyError : monthly",
       });
     }
 
@@ -75,7 +73,7 @@ const keyErrorLogIn = async (req, res, next) => {
     if (!email || !password) {
       throw errUtils.errGenerator({
         statusCode: 500,
-        message: 'KeyError',
+        message: "KeyError",
       });
     }
     next();
@@ -93,7 +91,7 @@ const keyErrorSignUp = async (req, res, next) => {
     for (const key in obj) {
       if (!obj[key]) {
         throw errUtils.errGenerator({
-          statusCode: '400',
+          statusCode: "400",
           message: `KEY_ERROR_${key}`,
         });
       }
