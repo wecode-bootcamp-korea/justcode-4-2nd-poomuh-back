@@ -43,7 +43,7 @@ const getfilteredClusters = async (arrTradeTypes, arrLatLng) => {
 };
 
 const getfilteredEstates = async (user, arrTradeTypes, headers, arrLatLng) => {
-  const offset = headers.offset ? headers.offset : '';
+  const offset = headers.offset ? headers.offset * 4 : '';
   const limit = headers.offset ? 4 : '';
   const west = arrLatLng[0] ? arrLatLng[0] : 0;
   const east = arrLatLng[1] ? arrLatLng[1] : 999;
@@ -91,11 +91,7 @@ const getfilteredEstates = async (user, arrTradeTypes, headers, arrLatLng) => {
           : Prisma.empty
       }
     GROUP BY re.id
-    ${
-      offset && limit
-        ? Prisma.sql`LIMIT ${limit} OFFSET ${offset}`
-        : Prisma.empty
-    }
+    ${limit ? Prisma.sql`LIMIT ${limit} OFFSET ${offset}` : Prisma.empty}
     
   `;
 };
