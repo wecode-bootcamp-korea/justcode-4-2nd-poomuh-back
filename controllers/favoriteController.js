@@ -27,8 +27,10 @@ const getLikeEstates = async (req, res, next) => {
 
 const getRecentEstates = async (req, res, next) => {
   try {
+    const user = req.user ? req.user : '';
     const ids = req.headers.recent;
-    const recent = await favoriteService.getRecentEstates(ids);
+    const state = req.headers.state;
+    const recent = await favoriteService.getRecentEstates(ids, user, state);
     return res
       .status(200)
       .json({ messgae: 'RECENT_ESTATES_IS_RENDERED', recent });

@@ -38,8 +38,8 @@ const filteredEstates = async (req, res, next) => {
 const createEstateInfo = async (req, res, next) => {
   try {
     const body = req.body;
-    const agent = req.agent;
-    await estateService.createEstateInfo(body, agent);
+    const agentId = req.agent;
+    await estateService.createEstateInfo(body, agentId);
     return res.status(200).json({ message: "등록 성공!" });
   } catch (err) {
     next(err);

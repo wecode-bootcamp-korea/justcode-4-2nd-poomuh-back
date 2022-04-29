@@ -1,12 +1,12 @@
 const { PrismaClient, Prisma } = require("@prisma/client");
+const { header } = require("express/lib/request");
 const prisma = new PrismaClient();
 
-const getfilteredClusters = async (arrTradeTypes, headers) => {
-  const { ha, oa, qa, pa } = headers.latlng;
-  const east = oa ? oa : 999;
-  const west = ha ? ha : 0;
-  const south = qa ? qa : 0;
-  const north = pa ? pa : 99;
+const getfilteredClusters = async (arrTradeTypes, arrLatLng) => {
+  const west = arrLatLng[0] ? arrLatLng[0] : 0;
+  const east = arrLatLng[1] ? arrLatLng[1] : 999;
+  const south = arrLatLng[2] ? arrLatLng[2] : 0;
+  const north = arrLatLng[3] ? arrLatLng[3] : 99;
   return await prisma.$queryRaw`
     SELECT
       re.id,
@@ -30,9 +30,9 @@ const getfilteredClusters = async (arrTradeTypes, headers) => {
       JOIN categories AS c ON re.category_id = c.id
       JOIN trades_real_estates AS tre ON tre.real_estate_id = re.id
       JOIN trades AS t ON t.id = tre.trade_id
-      WHERE
+      ${Prisma.sql`WHERE
       (re.latitude BETWEEN ${south} AND ${north}) AND
-      (re.longitude BETWEEN ${west} AND ${east})
+      (re.longitude BETWEEN ${west} AND ${east})`}
       ${
         arrTradeTypes[0]
           ? Prisma.sql`AND (t.type IN (${Prisma.join(arrTradeTypes)}))`
@@ -42,14 +42,13 @@ const getfilteredClusters = async (arrTradeTypes, headers) => {
   `;
 };
 
-const getfilteredEstates = async (user, arrTradeTypes, headers) => {
-  const offset = headers.offset ? headers.offset : "";
+const getfilteredEstates = async (user, arrTradeTypes, headers, arrLatLng) => {
+  const offset = headers.offset ? headers.offset * 4 : "";
   const limit = headers.offset ? 4 : "";
-  const { ha, oa, qa, pa } = headers.latlng;
-  const east = oa ? oa : 999;
-  const west = ha ? ha : 0;
-  const south = qa ? qa : 0;
-  const north = pa ? pa : 99;
+  const west = arrLatLng[0] ? arrLatLng[0] : 0;
+  const east = arrLatLng[1] ? arrLatLng[1] : 999;
+  const south = arrLatLng[2] ? arrLatLng[2] : 0;
+  const north = arrLatLng[3] ? arrLatLng[3] : 99;
 
   return await prisma.$queryRaw`
     SELECT
@@ -92,16 +91,12 @@ const getfilteredEstates = async (user, arrTradeTypes, headers) => {
           : Prisma.empty
       }
     GROUP BY re.id
-    ${
-      offset && limit
-        ? Prisma.sql`LIMIT ${limit} OFFSET ${offset}`
-        : Prisma.empty
-    }
+    ${limit ? Prisma.sql`LIMIT ${limit} OFFSET ${offset}` : Prisma.empty}
     
   `;
 };
 
-const createEstateInfo = async (body, agent) => {
+const createEstateInfo = async (body, agentId) => {
   const {
     address_main,
     building_name,
@@ -164,7 +159,7 @@ const createEstateInfo = async (body, agent) => {
     ${price_monthly},
     ${heat_id},
     ${category_id},
-    ${agent}
+    ${agentId}
     )
    `;
 
