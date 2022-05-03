@@ -4,7 +4,6 @@ const keyErrorEstate = async (req, res, next) => {
   try {
     const {
       address_main,
-      building_name,
       address_dong,
       address_ho,
       latitude,
@@ -24,7 +23,6 @@ const keyErrorEstate = async (req, res, next) => {
     } = req.body;
     const requiredKey = {
       address_main,
-      building_name,
       address_ho,
       latitude,
       longitude,
