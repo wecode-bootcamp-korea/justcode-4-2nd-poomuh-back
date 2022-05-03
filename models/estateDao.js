@@ -285,7 +285,7 @@ const putEstateInfo = async (estateId, body) => {
     real_estate_agent_id=${real_estate_agent_id}
     WHERE id = ${estateId} 
     `;
-  await prisma.$executeRaw`
+  await prisma.$queryRaw`
     DELETE FROM trades_real_estates WHERE real_estate_id=${estateId}
     `;
 
