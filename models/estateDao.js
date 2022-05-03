@@ -261,8 +261,7 @@ const putEstateInfo = async (estateId, body) => {
     trade_id,
   } = body;
 
-  const [realEstates, updateRealEstates] = await prisma.$transaction([
-    prisma.$queryRaw`
+  await prisma.$queryRaw`
   UPDATE real_estates
   SET 
     address_main= ${address_main},
@@ -285,18 +284,18 @@ const putEstateInfo = async (estateId, body) => {
     category_id=${category_id},
     real_estate_agent_id=${real_estate_agent_id}
     WHERE id = ${estateId} 
-    `,
-    prisma.$executeRaw`
-    DELETE FROM trades_real_estates WHER real_estate_id=${estateId}
-    `,
-  ]);
+    `;
+  await prisma.$queryRaw`
+    DELETE FROM trades_real_estates WHERE real_estate_id=${estateId}
+    `;
+
   for (i = 0; i < trade_id.length; i++) {
     const trade = trade_id[i];
     await prisma.$queryRaw`
      INSERT trades_real_estates (trade_id,real_estate_id) VALUES (${trade},${estateId})
       `;
   }
-  await prisma.$transaction([a, b]);
+
   return;
 };
 const deleteEstateInfo = async (estateId, agentId) => {
@@ -324,6 +323,8 @@ const search = async (search) => {
     select: {
       building_name: true,
       address_main: true,
+      latitude: true,
+      longitude: true,
       categories: { select: { type: true } },
     },
   });
@@ -342,6 +343,8 @@ const search = async (search) => {
     select: {
       building_name: true,
       address_main: true,
+      latitude: true,
+      longitude: true,
       categories: { select: { type: true } },
     },
   });
