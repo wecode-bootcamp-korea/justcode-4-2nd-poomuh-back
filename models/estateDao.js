@@ -1,80 +1,30 @@
 const { PrismaClient, Prisma } = require("@prisma/client");
-const { header } = require("express/lib/request");
 const prisma = new PrismaClient();
 
-const getfilteredClusters = async (arrTradeTypes, arrLatLng) => {
-  const west = arrLatLng[0] ? arrLatLng[0] : 0;
-  const east = arrLatLng[1] ? arrLatLng[1] : 999;
-  const south = arrLatLng[2] ? arrLatLng[2] : 0;
-  const north = arrLatLng[3] ? arrLatLng[3] : 99;
+const getFilteredMaps = async (user, arrTradeTypes, keyword, offset, limit) => {
   return await prisma.$queryRaw`
     SELECT
-      re.id,
-      re.address_main,
+      re.address_main AS addresMain,
       re.building_name,
-      re.address_ho,
+      re.address_ho AS addressHo,
       re.latitude AS lat,
       re.longitude AS lng,
-      re.supply_size,
-      re.exclusive_size,
-      re.building_floor,
-      re.current_floor,
-      re.description_title,
-      re.price_main,
-      re.price_deposit,
-      re.price_monthly,
-      re.room_image AS image_url,
-      c.type AS category_type,
-      JSON_ARRAYAGG(t.type) AS trade_type
-      FROM real_estates AS re
-      JOIN categories AS c ON re.category_id = c.id
-      JOIN trades_real_estates AS tre ON tre.real_estate_id = re.id
-      JOIN trades AS t ON t.id = tre.trade_id
-      ${Prisma.sql`WHERE
-      (re.latitude BETWEEN ${south} AND ${north}) AND
-      (re.longitude BETWEEN ${west} AND ${east})`}
-      ${
-        arrTradeTypes[0]
-          ? Prisma.sql`AND (t.type IN (${Prisma.join(arrTradeTypes)}))`
-          : Prisma.empty
-      }
-    GROUP BY re.id
-  `;
-};
-
-const getfilteredEstates = async (user, arrTradeTypes, headers, arrLatLng) => {
-  const offset = headers.offset ? headers.offset * 4 : "";
-  const limit = headers.offset ? 4 : "";
-  const west = arrLatLng[0] ? arrLatLng[0] : 0;
-  const east = arrLatLng[1] ? arrLatLng[1] : 999;
-  const south = arrLatLng[2] ? arrLatLng[2] : 0;
-  const north = arrLatLng[3] ? arrLatLng[3] : 99;
-
-  return await prisma.$queryRaw`
-    SELECT
-      re.id,
-      re.address_main,
-      re.building_name,
-      re.address_ho,
-      re.latitude AS lat,
-      re.longitude AS lng,
-      re.supply_size,
-      re.exclusive_size,
-      re.building_floor,
-      re.current_floor,
-      re.description_title,
-      re.price_main,
-      re.price_deposit,
-      re.price_monthly,
-      re.room_image AS image_url,
-      c.type AS category_type,
-      JSON_ARRAYAGG(t.type) AS trade_type
+      re.exclusive_size AS excSize,
+      re.building_floor AS buildFloor,
+      re.current_floor AS currFloor,
+      re.available_date AS ableDate,
+      re.description_title AS descTitle,
+      re.price_main AS priceMain,
+      re.price_deposit AS priceDeposit,
+      re.price_monthly AS priceMonthly,
+      c.type AS categoryType,
+      JSON_ARRAYAGG(t.type) AS tradeTypes
       ${
         user
           ? Prisma.sql`
         , ( SELECT l.real_estate_id 
         FROM users_real_estates_likes AS l
-        WHERE l.user_id = ${user} AND re.id = l.real_estate_id ) AS is_like
+        WHERE l.user_id = ${user} AND re.id = l.real_estate_id ) AS isLike
         `
           : Prisma.empty
       }
@@ -83,20 +33,26 @@ const getfilteredEstates = async (user, arrTradeTypes, headers, arrLatLng) => {
     JOIN trades_real_estates AS tre ON tre.real_estate_id = re.id
     JOIN trades AS t ON t.id = tre.trade_id
     WHERE
-      (re.latitude BETWEEN ${south} AND ${north}) AND
-      (re.longitude BETWEEN ${west} AND ${east})
+      (re.latitude BETWEEN 0 AND 99) AND
+      (re.longitude BETWEEN 0 AND 999) AND
       ${
         arrTradeTypes[0]
-          ? Prisma.sql`AND (t.type IN (${Prisma.join(arrTradeTypes)}))`
+          ? Prisma.sql`(t.type IN (${Prisma.join(arrTradeTypes)})) AND`
           : Prisma.empty
       }
+      ((re.building_name LIKE ${keyword}) OR
+      (re.address_main LIKE ${keyword}))
     GROUP BY re.id
-    ${limit ? Prisma.sql`LIMIT ${limit} OFFSET ${offset}` : Prisma.empty}
+    ${
+      offset && limit
+        ? Prisma.sql`LIMIT ${limit} OFFSET ${offset}`
+        : Prisma.empty
+    }
     
   `;
 };
 
-const createEstateInfo = async (body, agentId) => {
+const createEstateInfo = async (body) => {
   const {
     address_main,
     building_name,
@@ -116,6 +72,7 @@ const createEstateInfo = async (body, agentId) => {
     price_monthly,
     heat_id,
     category_id,
+    real_estate_agent_id,
     trade_id,
   } = body;
   await prisma.$queryRaw`
@@ -159,17 +116,19 @@ const createEstateInfo = async (body, agentId) => {
     ${price_monthly},
     ${heat_id},
     ${category_id},
-    ${agentId}
+    ${real_estate_agent_id}
     )
    `;
 
   const b = await prisma.$queryRaw`
     SELECT id FROM real_estates
     WHERE address_ho=${address_ho} AND address_main=${address_main} AND current_floor=${current_floor}`;
+  console.log(b);
 
   const id = b[0].id;
-
+  console.log(id);
   for (j = 0; j < trade_id.length; j++) {
+    console.log("message:", trade_id[j]);
     const trade = trade_id[j];
     await prisma.$queryRaw`
     INSERT INTO trades_real_estates (trade_id,real_estate_id) VALUES (${trade},${id})
@@ -201,10 +160,6 @@ const getEstateInfo = async (estateId, agentId) => {
       heat_id: true,
       category_id: true,
       real_estate_agent_id: true,
-      trades_real_estates: {
-        where: { real_estate_id: Number(estateId) },
-        select: { trade_id: true },
-      },
     },
   });
 };
@@ -260,8 +215,7 @@ const putEstateInfo = async (estateId, body) => {
     real_estate_agent_id,
     trade_id,
   } = body;
-
-  const [realEstates, updateRealEstates] = await prisma.$transaction([
+  const [realEstates, updateRealEstate] = await prisma.$transaction([
     prisma.$queryRaw`
   UPDATE real_estates
   SET 
@@ -286,8 +240,9 @@ const putEstateInfo = async (estateId, body) => {
     real_estate_agent_id=${real_estate_agent_id}
     WHERE id = ${estateId} 
     `,
+
     prisma.$executeRaw`
-    DELETE FROM trades_real_estates WHER real_estate_id=${estateId}
+    DELETE FROM trades_real_estates WHERE real_estate_id=${estateId}
     `,
   ]);
   for (i = 0; i < trade_id.length; i++) {
@@ -296,7 +251,6 @@ const putEstateInfo = async (estateId, body) => {
      INSERT trades_real_estates (trade_id,real_estate_id) VALUES (${trade},${estateId})
       `;
   }
-  await prisma.$transaction([a, b]);
   return;
 };
 const deleteEstateInfo = async (estateId, agentId) => {
@@ -324,6 +278,8 @@ const search = async (search) => {
     select: {
       building_name: true,
       address_main: true,
+      latitude: true,
+      longitude: true,
       categories: { select: { type: true } },
     },
   });
@@ -342,6 +298,8 @@ const search = async (search) => {
     select: {
       building_name: true,
       address_main: true,
+      latitude: true,
+      longitude: true,
       categories: { select: { type: true } },
     },
   });
@@ -349,8 +307,7 @@ const search = async (search) => {
   return room;
 };
 module.exports = {
-  getfilteredClusters,
-  getfilteredEstates,
+  getFilteredMaps,
   createEstateInfo,
   getEstateList,
   getEstateInfo,
