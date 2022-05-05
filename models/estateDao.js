@@ -211,12 +211,15 @@ const getEstateInfo = async (estateId, agentId) => {
 
 const getEstateList = async (agentId) => {
   const estateId = await prisma.realEstates.findMany({
-    where: { real_estate_agent_id: Number(agentId) },
+    where: {
+      AND: [{ real_estate_agent_id: Number(agentId) }, { is_deleted: false }],
+    },
     select: { id: true },
   });
+
   let result = [];
   for (i = 0; i < estateId.length; i++) {
-    result[i] = await prisma.realEstates.findUnique({
+    const estateInfo = await prisma.realEstates.findUnique({
       where: { id: estateId[i].id },
       select: {
         id: true,
@@ -225,14 +228,13 @@ const getEstateList = async (agentId) => {
         price_monthly: true,
         categories: { select: { type: true } },
         created_at: true,
-        users_real_estate_likes: {
-          where: { real_estate_id: Number(`${estateId[i].id}`) },
-          select: {
-            user_id: true,
-          },
-        },
       },
     });
+    const likes = await prisma.usersRealEstatesLikes.aggregate({
+      where: { real_estate_id: estateId[i].id },
+      _count: true,
+    });
+    result[i] = { likes, estateInfo };
   }
   return result;
 };
