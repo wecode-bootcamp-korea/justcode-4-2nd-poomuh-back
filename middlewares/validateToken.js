@@ -6,7 +6,6 @@ const userService = require("../services/userService");
 const agentsValidateToken = async (req, res, next) => {
   try {
     const { token } = req.headers;
-    console.log("token:", token);
     if (!token) {
       throw errUtils.errGenerator({
         statusCode: 401,
@@ -14,7 +13,6 @@ const agentsValidateToken = async (req, res, next) => {
       });
     }
     const id = jwt.verify(token, process.env.SECRET_KEY);
-    console.log("id:", id);
     const findAgent = await agentService.getAgentByUserId(id.agentId);
 
     if (!findAgent[0]) {
@@ -24,7 +22,6 @@ const agentsValidateToken = async (req, res, next) => {
       });
     }
     req.agent = findAgent[0].id;
-    console.log(req.agent);
     next();
   } catch (err) {
     next(err);
