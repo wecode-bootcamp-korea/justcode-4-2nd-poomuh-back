@@ -28,7 +28,7 @@ router.put(
   agentsValidateToken,
   estateController.putEstateInfo
 );
-router.get("/list/myList", agentsValidateToken, estateController.getEstateList);
+router.get("/agents/list", agentsValidateToken, estateController.getEstateList);
 router.delete("/:id", agentsValidateToken, estateController.deleteEstateInfo);
 router.get("/content/search", estateController.search);
 

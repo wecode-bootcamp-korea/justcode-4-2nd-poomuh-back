@@ -58,7 +58,6 @@ const getEstateInfo = async (req, res, next) => {
 const putEstateInfo = async (req, res, next) => {
   try {
     const estateId = req.params.id;
-    console.log(estateId);
     const body = req.body;
     await estateService.putEstateInfo(estateId, body);
     return res.status(200).json({ message: "업데이트 성공" });
