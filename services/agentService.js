@@ -1,14 +1,14 @@
-const agentDao = require('../models/agentDao');
-const errUtils = require('../utils/errUtils');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+const agentDao = require("../models/agentDao");
+const errUtils = require("../utils/errUtils");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const signUp = async (email, password, username, nickname) => {
   const agentEmail = await agentDao.getAgentEmailByEmail(email);
   if (agentEmail[0]) {
     throw errUtils.errGenerator({
       statusCode: 400,
-      message: 'EXSITING_USER',
+      message: "EXSITING_USER",
     });
   }
 
@@ -40,15 +40,15 @@ const logIn = async (email, password) => {
   if (agent[0] === undefined) {
     throw errUtils.errGenerator({
       statusCode: 400,
-      message: '존재하지 않는 사용자입니다.',
+      message: "존재하지 않는 사용자입니다.",
     });
   }
 
-  const checkPassword = bcrypt.compare(password, agent[0].password);
+  const checkPassword = await bcrypt.compare(password, agent[0].password);
   if (!checkPassword) {
     throw errUtils.errGenerator({
       statusCode: 400,
-      message: '이메일 혹은 비밀번호가 올바르지 않습니다.',
+      message: "이메일 혹은 비밀번호가 올바르지 않습니다.",
     });
   }
 
