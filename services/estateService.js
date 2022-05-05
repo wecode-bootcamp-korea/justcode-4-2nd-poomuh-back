@@ -33,7 +33,7 @@ const getEstateList = async (estateId, agentId) => {
   return await estateDao.getEstateList(estateId, agentId);
 };
 const updateEstateInfo = async (estateId, agentId, body) => {
-  return await estateDao.putEstateInfo(estateId, agentId, body);
+  return await estateDao.updateEstateInfo(estateId, agentId, body);
 };
 const deleteEstateInfo = async (estateId, agentId) => {
   return await estateDao.deleteEstateInfo(estateId, agentId);
