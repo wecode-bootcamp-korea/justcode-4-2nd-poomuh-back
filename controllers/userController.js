@@ -22,6 +22,7 @@ const logIn = async (req, res, next) => {
     return res.status(200).json({
       message: "Login success",
       accessToken: token,
+      userType: "user",
     });
   } catch (err) {
     next(err);
