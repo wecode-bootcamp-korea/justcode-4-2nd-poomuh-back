@@ -26,7 +26,7 @@ router.put(
   "/:id",
   keyErrorEstate,
   agentsValidateToken,
-  estateController.putEstateInfo
+  estateController.updateEstateInfo
 );
 router.get("/agents/list", agentsValidateToken, estateController.getEstateList);
 router.delete("/:id", agentsValidateToken, estateController.deleteEstateInfo);
