@@ -55,11 +55,12 @@ const getEstateInfo = async (req, res, next) => {
     next(err);
   }
 };
-const putEstateInfo = async (req, res, next) => {
+const updateEstateInfo = async (req, res, next) => {
   try {
     const estateId = req.params.id;
+    const agentId = req.agent;
     const body = req.body;
-    await estateService.putEstateInfo(estateId, body);
+    await estateService.updateEstateInfo(estateId, agentId, body);
     return res.status(200).json({ message: "업데이트 성공" });
   } catch (err) {
     next(err);
@@ -104,6 +105,6 @@ module.exports = {
   getEstateInfo,
   getEstateList,
   deleteEstateInfo,
-  putEstateInfo,
+  updateEstateInfo,
   search,
 };

@@ -32,8 +32,8 @@ const getEstateInfo = async (estateId, agentId) => {
 const getEstateList = async (estateId, agentId) => {
   return await estateDao.getEstateList(estateId, agentId);
 };
-const putEstateInfo = async (estateId, body) => {
-  return await estateDao.putEstateInfo(estateId, body);
+const updateEstateInfo = async (estateId, agentId, body) => {
+  return await estateDao.putEstateInfo(estateId, agentId, body);
 };
 const deleteEstateInfo = async (estateId, agentId) => {
   return await estateDao.deleteEstateInfo(estateId, agentId);
@@ -49,6 +49,6 @@ module.exports = {
   getEstateInfo,
   getEstateList,
   deleteEstateInfo,
-  putEstateInfo,
+  updateEstateInfo,
   search,
 };

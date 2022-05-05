@@ -239,7 +239,7 @@ const getEstateList = async (agentId) => {
   return result;
 };
 
-const putEstateInfo = async (estateId, body) => {
+const updateEstateInfo = async (estateId, agentId, body) => {
   const {
     address_main,
     building_name,
@@ -259,7 +259,6 @@ const putEstateInfo = async (estateId, body) => {
     price_monthly,
     heat_id,
     category_id,
-    real_estate_agent_id,
     trade_id,
   } = body;
 
@@ -284,7 +283,7 @@ const putEstateInfo = async (estateId, body) => {
     price_monthly=${price_monthly},
     heat_id=${heat_id},
     category_id=${category_id},
-    real_estate_agent_id=${real_estate_agent_id}
+    real_estate_agent_id=${agentId}
     WHERE id = ${estateId} 
     `;
   await prisma.$queryRaw`
@@ -359,7 +358,7 @@ module.exports = {
   createEstateInfo,
   getEstateList,
   getEstateInfo,
-  putEstateInfo,
+  updateEstateInfo,
   deleteEstateInfo,
   search,
 };
