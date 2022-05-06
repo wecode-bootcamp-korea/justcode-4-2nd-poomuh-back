@@ -1,18 +1,20 @@
 const http = require('http');
 const express = require('express');
 const { PrismaClient } = require('@prisma/client');
-// const routes = require('./routes')
+const routes = require('./routes');
+const errUtils = require('./utils/errUtils');
+const cors = require('cors');
 
 const prisma = new PrismaClient();
 
 const app = express();
 
 app.use(express.json());
-// app.use(routes)
+app.use(cors());
+app.use(express.static('./databases/uploads'));
+app.use(routes);
+app.use(errUtils.errHandler);
 
-app.get('/', (req, res) => {
-  res.json({ message: '/ hi' });
-});
 const server = http.createServer(app);
 
 const start = async () => {
@@ -21,8 +23,7 @@ const start = async () => {
       console.log(`Server is listening on ${process.env.PORT}`)
     );
   } catch (err) {
-    console.error(err);
-    //    await prisma.$disconnect()
+    await prisma.$disconnect();
   }
 };
 

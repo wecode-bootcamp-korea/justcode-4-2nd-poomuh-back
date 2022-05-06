@@ -5,18 +5,25 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon server.js"
+    "start": "nodemon server.js",
+    "distribute": "npm i && prisma generate && pm2 start server.js --name poomuh_back -i max"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.17.3"
+    "bcrypt": "^5.0.1",
+    "cors": "^2.8.5",
+    "express": "^4.17.3",
+    "jsonwebtoken": "^8.5.1",
+    "multer": "^1.4.4"
   },
   "devDependencies": {
     "@prisma/client": "^3.12.0",
     "dotenv": "^16.0.0",
     "nodemon": "^2.0.15",
+    "pm2": "^5.2.0",
+    "prettier-plugin-prisma": "^3.12.0",
     "prisma": "^3.12.0"
   }
 }

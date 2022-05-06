@@ -1,10 +1,10 @@
-const userService = require("../services/userService");
+const agentService = require("../services/agentService");
 
 const signUp = async (req, res, next) => {
   try {
     const { email, password, username, nickname } = req.body;
 
-    await userService.signUp(email, password, username, nickname);
+    await agentService.signUp(email, password, username, nickname);
 
     return res.status(201).json({
       username: username,
@@ -18,11 +18,11 @@ const signUp = async (req, res, next) => {
 const logIn = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-    const token = await userService.logIn(email, password);
+    const token = await agentService.logIn(email, password);
     return res.status(200).json({
       message: "Login success",
       accessToken: token,
-      userType: "user",
+      userType: "agent",
     });
   } catch (err) {
     next(err);

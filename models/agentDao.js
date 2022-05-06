@@ -1,37 +1,36 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-const createUser = async (email, encryptPw, username, nickname) => {
+const createAgent = async (email, encryptPw, username, nickname) => {
   return await prisma.$queryRaw`
-    INSERT INTO users(email, password, name, nickname) 
+    INSERT INTO real_estate_agents(email, password, name, nickname) 
     VALUES (${email}, ${encryptPw}, ${username}, ${nickname})
   `;
 };
 
 const checkByEmail = async (email) => {
   return await prisma.$queryRaw`
-    SELECT id,password FROM users
+    SELECT id,password FROM real_estate_agents
     WHERE email= ${email}
   `;
 };
-
-const getUserIdById = async (number) => {
+const getAgentIdById = async (number) => {
   return await prisma.$queryRaw`
-    SELECT id FROM users
-    where id =${number}
+    SELECT id FROM real_estate_agents
+    WHERE ID = ${number}
   `;
 };
 
-const getUserEmailByEmail = async (email) => {
+const getAgentEmailByEmail = async (email) => {
   return await prisma.$queryRaw`
-    SELECT email FROM users
+    SELECT email FROM real_estate_agents
     WHERE email = ${email}
   `;
 };
 
 module.exports = {
-  createUser,
+  createAgent,
   checkByEmail,
-  getUserIdById,
-  getUserEmailByEmail,
+  getAgentIdById,
+  getAgentEmailByEmail,
 };
